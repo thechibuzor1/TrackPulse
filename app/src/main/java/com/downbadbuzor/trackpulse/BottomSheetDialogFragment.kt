@@ -12,6 +12,8 @@ import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -108,6 +110,7 @@ class PlayingBottomSheetFragment : BottomSheetDialogFragment() {
                     if (isPlaying) {
                         // Active playback.
                         binding.playPause.setImageResource(R.drawable.playing_pause)
+
                     } else {
                         binding.playPause.setImageResource(R.drawable.playing_play)
                         // Not playing because playback is paused, ended, suppressed, or the player
@@ -125,6 +128,21 @@ class PlayingBottomSheetFragment : BottomSheetDialogFragment() {
                         MyExoPlayer.getNextSong()?.apply {
                             setUpNext(title, artist, albumArtUri!!)
                         }
+
+                }
+
+                override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+                    super.onShuffleModeEnabledChanged(shuffleModeEnabled)
+
+                    if (shuffleModeEnabled) {
+                        MyExoPlayer.getNextSong()?.apply {
+                            setUpNext(title, artist, albumArtUri!!)
+                        }
+                    } else {
+                        MyExoPlayer.getNextSong()?.apply {
+                            setUpNext(title, artist, albumArtUri!!)
+                        }
+                    }
 
                 }
 
@@ -182,9 +200,11 @@ class PlayingBottomSheetFragment : BottomSheetDialogFragment() {
             // Your existing click handling logic
             if (MyExoPlayer.getIsPlaying()) {
                 MyExoPlayer.pause()
+                binding.playPause.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.rotate_left))
 
             } else {
                 MyExoPlayer.resume()
+                binding.playPause.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.rotate_right))
             }
         }
 

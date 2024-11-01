@@ -15,10 +15,7 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
-import com.downbadbuzor.trackpulse.adapters.AudioAdapter
 import com.downbadbuzor.trackpulse.model.AudioModel
 
 object MyExoPlayer{
@@ -57,9 +54,13 @@ object MyExoPlayer{
                         super.onMediaMetadataChanged(mediaMetadata)
 
                         val currentItemIndex = exoPlayer?.currentMediaItemIndex
-                        currentSong = audioList?.get(currentItemIndex!!.toInt())
-                        getCurrentSong()?.apply {
-                            setDiv(activity, title, artist, albumArtUri!!)
+                        val currentTimeLine = exoPlayer?.currentTimeline
+
+                        if (currentItemIndex != null && currentItemIndex != -1 && currentTimeLine!!.isEmpty.not()){
+                            currentSong = audioList?.get(currentItemIndex!!.toInt())
+                            currentSong?.apply {
+                                this.albumArtUri?.let { setDiv(activity, this.title , this.artist, it) }
+                            }
                         }
 
                     }
