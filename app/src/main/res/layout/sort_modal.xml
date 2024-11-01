@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sort By"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:textStyle="bold"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_gravity="center_vertical"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/warning"
+            />
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This may affect current playback."
+            android:layout_marginLeft="2dp"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold"
+            />
+    </LinearLayout>
+
+    <CheckedTextView
+        android:id="@+id/sort_by_title"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:paddingVertical="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dp"
+        android:checked="true"
+        android:paddingRight="6dp"
+        android:checkMark="@drawable/ratio"
+        android:ellipsize="marquee"
+        android:gravity="center_vertical"
+        android:text="Title"/>
+
+    <CheckedTextView
+        android:id="@+id/sort_by_artist"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:paddingVertical="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:checked="false"
+        android:gravity="center_vertical"
+        android:checkMark="@drawable/ratio"
+        android:ellipsize="marquee"
+        android:text="Artist"/>
+
+
+
+</LinearLayout>

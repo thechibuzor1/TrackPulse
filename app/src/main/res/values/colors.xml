@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray">#FF9A9898</color>
+    <color name="seek_bar_bg">#FF9A9898</color>
+
+    <color name="green">#FF00FF00</color>
+
+    <color name="default_color">@color/material_dynamic_secondary30</color>
+    <color name="previous_next_btns">@color/material_dynamic_primary95</color>
+
+    <color name="playing_song_text_color">#FF00FF00</color> <!-- Red for playing song -->
+    <color name="default_text_color">@android:color/primary_text_light</color>
+
+
+    <style name="RoundedCorners">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+</resources>
