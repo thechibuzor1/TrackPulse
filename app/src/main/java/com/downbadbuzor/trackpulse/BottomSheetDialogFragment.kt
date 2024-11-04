@@ -1,5 +1,6 @@
 package com.downbadbuzor.trackpulse
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -13,9 +14,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
@@ -24,11 +25,15 @@ import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.downbadbuzor.trackpulse.databinding.BottomSheetPlayingBinding
+import com.downbadbuzor.trackpulse.model.AudioModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class PlayingBottomSheetFragment : BottomSheetDialogFragment() {
+class PlayingBottomSheetFragment(
+    private val activity: Activity,
+    private val fragmentManager : FragmentManager
+): BottomSheetDialogFragment() {
 
     private lateinit var binding: BottomSheetPlayingBinding
     private lateinit var exoPlayer: ExoPlayer
@@ -45,12 +50,11 @@ class PlayingBottomSheetFragment : BottomSheetDialogFragment() {
         exoPlayer = MyExoPlayer.getInstance()!!
 
         binding.playerView.player = exoPlayer
-        binding.playerView.showController()
 
-        MyExoPlayer.getCurrentSong()?.let { currentSong ->
-            if (currentSong.albumArtUri != null) {
-                setUi(currentSong.title, currentSong.artist, currentSong.albumArtUri!!)
-            }
+        MyExoPlayer.getCurrentSong()?.let { currentSong  ->
+
+            setUi(currentSong.title.toString(),  currentSong.artist.toString(), currentSong.artworkUri!!.toString())
+
         }
 
         if(MyExoPlayer.getIsShuffled()){
@@ -66,6 +70,18 @@ class PlayingBottomSheetFragment : BottomSheetDialogFragment() {
         }else{
             binding.playPause.setImageResource(R.drawable.playing_play)
         }
+
+        //queue
+        binding.queue.setOnClickListener {
+            val bottomSheetFragment = QueueList(fragmentManager)
+            bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
+        }
+
+        binding.upnext.setOnClickListener {
+            val bottomSheetFragment = QueueList(fragmentManager)
+            bottomSheetFragment.show(childFragmentManager, bottomSheetFragment.tag)
+        }
+
 
         //repeat mode
 
@@ -122,13 +138,13 @@ class PlayingBottomSheetFragment : BottomSheetDialogFragment() {
 
                 override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
                     super.onMediaMetadataChanged(mediaMetadata)
-                         MyExoPlayer.getCurrentSong()?.apply {
-                             setUi(title, artist, albumArtUri!!)
-                         }
-                        MyExoPlayer.getNextSong()?.apply {
-                            setUpNext(title, artist, albumArtUri!!)
-                        }
 
+                    MyExoPlayer.getCurrentSong()?.let { currentSong ->
+                        setUi(currentSong.title.toString(), currentSong.artist.toString(), currentSong.artworkUri?.toString() ?: "")
+                    }
+                    MyExoPlayer.getNextSong()?.let { nextSong -> // Use let for nextSong as well
+                        setUpNext(nextSong.title, nextSong.artist, nextSong.albumArtUri?.toString() ?: "")
+                    }
                 }
 
                 override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
@@ -145,7 +161,6 @@ class PlayingBottomSheetFragment : BottomSheetDialogFragment() {
                     }
 
                 }
-
 
             }
         )
@@ -199,12 +214,12 @@ class PlayingBottomSheetFragment : BottomSheetDialogFragment() {
 
             // Your existing click handling logic
             if (MyExoPlayer.getIsPlaying()) {
-                MyExoPlayer.pause()
                 binding.playPause.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.rotate_left))
+                MyExoPlayer.pause()
 
             } else {
-                MyExoPlayer.resume()
                 binding.playPause.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.rotate_right))
+                MyExoPlayer.resume()
             }
         }
 

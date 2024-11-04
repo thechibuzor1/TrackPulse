@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main_layout"
     tools:context=".MainActivity">
 
     <!-- Your existing content goes here -->
@@ -59,6 +60,9 @@
                     android:layout_height="wrap_content"
                     >
                 <SearchView
+                    android:focusable="false"
+                    android:focusedByDefault="false"
+                    android:focusableInTouchMode="false"
                     android:queryHint="Search"
                     android:queryBackground="@null"
                     android:background="@drawable/search_bg"
@@ -83,6 +87,7 @@
                         android:text="Sort" />
     </RelativeLayout>
                 <RelativeLayout
+                    android:id="@+id/sub_header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"

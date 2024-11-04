@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:paddingTop="16dp"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="40dp"
+        android:layout_height="3dp"
+        android:layout_gravity="center"
+        app:dividerColor="@color/gray"
+        />
+
+    <TextView
+        android:layout_marginVertical="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Up Next"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif-black"
+        />
+
+    <TextView
+        android:id="@+id/clear_btn"
+        android:paddingBottom="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear"
+        android:layout_gravity="end"
+        android:textColor="@color/gray"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:paddingHorizontal="16dp"
+        android:fontFamily="sans-serif-black"
+        />
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/queue_list"
+        />
+
+
+
+</LinearLayout>

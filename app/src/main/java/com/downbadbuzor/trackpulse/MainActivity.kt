@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.widget.ImageView
 import android.widget.SearchView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.launch
@@ -16,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.downbadbuzor.trackpulse.adapters.AudioAdapter
 import com.downbadbuzor.trackpulse.databinding.ActivityMainBinding
@@ -55,22 +57,24 @@ class MainActivity : AppCompatActivity() {
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
 
-
+        binding.subHeader.setOnClickListener{
+            binding.search.clearFocus()
+        }
 
         binding.playingBottomSheet.setOnClickListener {
-            MyExoPlayer.getCurrentSong()?.apply {
-                bottomSheetFragment = PlayingBottomSheetFragment()
+            binding.search.clearFocus()
+                bottomSheetFragment = PlayingBottomSheetFragment(this, supportFragmentManager)
                 bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
-
-            }
            }
 
         binding.sort.setOnClickListener {
+            binding.search.clearFocus()
             sortModal = SortModal(audioAdapter, audioList)
             sortModal.show(supportFragmentManager, sortModal.tag)
         }
 
         binding.giantPlay.setOnClickListener{
+            binding.search.clearFocus()
             if (MyExoPlayer.getIsPlaying()) {
                 MyExoPlayer.pause()
 
@@ -89,6 +93,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.shuffle.setOnClickListener {
+            binding.search.clearFocus()
             if (MyExoPlayer.getIsShuffled()) {
                  MyExoPlayer.shuffle(false)
             }
@@ -100,8 +105,13 @@ class MainActivity : AppCompatActivity() {
 
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
+
+                binding.search.clearFocus()
                 return false // Don't handle submit, just use onQueryTextChange
+
+
             }
+
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 searchJob?.cancel()
@@ -112,6 +122,17 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
         })
+        binding.search.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                binding.search.clearFocus()
+            }
+        }
+        binding.search.setOnClickListener {
+            binding.search.clearFocus()
+        }
+
+
+
 
         checkPermissions()
         // Initialize and show the bottom sheet
@@ -145,9 +166,9 @@ class MainActivity : AppCompatActivity() {
         //sort by default: title
         audioList.sortBy { it.title }
 
-        binding.num.text = "${audioList.size} tracks"
+        binding.num.text = "${audioList.size} track(s)"
 
-        audioAdapter = AudioAdapter(this)
+        audioAdapter = AudioAdapter(this, supportFragmentManager)
         audioAdapter.addSongs(audioList)
 
         binding.recyclerView.adapter = audioAdapter
@@ -165,6 +186,8 @@ class MainActivity : AppCompatActivity() {
             withContext(Dispatchers.Main) {
                 // Update adapter on the main thread
                 audioAdapter.updateExoplayerListFromSearch(filteredList)
+
+                binding.num.text = "${filteredList.size} track(s)"
             }
         }
     }
@@ -221,4 +244,6 @@ class MainActivity : AppCompatActivity() {
             loadAudioFiles()
         }
     }
+
+
 }
