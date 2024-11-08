@@ -1,36 +1,45 @@
 package com.downbadbuzor.trackpulse.adapters
 
 import android.app.Activity
-import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.SearchView
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startForegroundService
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.downbadbuzor.trackpulse.AudioItemModal
 import com.downbadbuzor.trackpulse.MyExoPlayer
-import com.downbadbuzor.trackpulse.PlayingBottomSheetFragment
 import com.downbadbuzor.trackpulse.R
 import com.downbadbuzor.trackpulse.databinding.AudioItemBinding
 import com.downbadbuzor.trackpulse.model.AudioModel
+import com.downbadbuzor.trackpulse.service.AudioService
 
 
-class AudioAdapter( private val activity: Activity,
-                    private val supportFragmentManager: FragmentManager) :
+class AudioAdapter(
+    private val activity: Activity,
+    private val supportFragmentManager: FragmentManager,
+) :
     RecyclerView.Adapter<AudioAdapter.AudioViewHolder>() {
     private val songs = mutableListOf<AudioModel>()
 
 
-    fun updateExoplayerListFromSearch(newSongs: List<AudioModel>) {
-            songs.clear()
-            songs.addAll(newSongs)
-
-            MyExoPlayer.updateAudioList(newSongs)
-            notifyDataSetChanged()
+    private fun startService() {
+        if (!MyExoPlayer.getIsServiceRunning()) {
+            val intent = Intent(activity, AudioService::class.java) // Use activity context
+            startForegroundService(activity, intent) // Start foreground service
+            MyExoPlayer.setIsServiceRunning(true) // Update service state
         }
+    }
+
+    fun updateExoplayerListFromSearch(newSongs: List<AudioModel>) {
+        songs.clear()
+        songs.addAll(newSongs)
+
+        MyExoPlayer.updateAudioList(newSongs)
+        notifyDataSetChanged()
+    }
 
     fun setCurrentSorting(sorting: String) {
         when (sorting) {
@@ -55,10 +64,6 @@ class AudioAdapter( private val activity: Activity,
     }
 
 
-
-
-
-
     inner class AudioViewHolder(val binding: AudioItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -77,7 +82,7 @@ class AudioAdapter( private val activity: Activity,
 
 
             binding.options.setOnClickListener {
-               val bottomSheetFragment = AudioItemModal(audio, false)
+                val bottomSheetFragment = AudioItemModal(audio, false)
                 bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
 
             }
@@ -86,16 +91,17 @@ class AudioAdapter( private val activity: Activity,
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioViewHolder {
-       val binding = AudioItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = AudioItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return AudioViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: AudioViewHolder, position: Int) {
-       holder.bind(songs[position])
+        holder.bind(songs[position])
 
         holder.itemView.setOnClickListener {
             val search = activity.findViewById<SearchView>(R.id.search)
-            MyExoPlayer.playFromHere(position, activity)
+            MyExoPlayer.playFromHere(position)
+            startService()
             search.clearFocus()
         }
         holder.itemView.setOnLongClickListener {

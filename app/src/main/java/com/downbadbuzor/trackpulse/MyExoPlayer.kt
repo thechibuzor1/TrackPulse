@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.downbadbuzor.trackpulse.model.AudioModel
 
+
 object MyExoPlayer {
 
     private var exoPlayer: ExoPlayer? = null
@@ -29,18 +30,28 @@ object MyExoPlayer {
     private lateinit var applicationContext: Context // Add applicationContext
 
     private var isPlaying = false
+
+
+    private var isServiceRunning = false
+    fun getIsServiceRunning(): Boolean {
+        return isServiceRunning
+    }
+
+    fun setIsServiceRunning(isRunning: Boolean) {
+        isServiceRunning = isRunning
+    }
+
     private var isShuffled = false
 
     private var sorting = "DEFAULT"
     private var pendingAudioList: List<AudioModel>? = null // Store the pending list
 
 
-
     //queue
     private var queue: MutableList<AudioModel>? = mutableListOf()
 
     private var originalPosition: Int = 0 // Store original playlist position
-    private  var originalIndexChanged: Boolean = false
+    private var originalIndexChanged: Boolean = false
     private var originalSequence = true // Flag for playlist interrupts
 
     fun getQueue(): List<AudioModel>? {
@@ -72,13 +83,24 @@ object MyExoPlayer {
         return this@MyExoPlayer.audioList
     }
 
+    fun getPlayer(): Player {
+        return exoPlayer!!
+    }
 
     fun getNextIndex(): Int {
-        return exoPlayer?.nextMediaItemIndex ?: 0
+        return if (!originalIndexChanged) {
+            exoPlayer?.nextMediaItemIndex!!
+        } else {
+            originalPosition
+        }
     }
 
 
-    fun initialize(context: Context, audioList: ArrayList<AudioModel>, activity: Activity) {
+    fun initialize(
+        context: Context,
+        audioList: ArrayList<AudioModel>,
+        activity: Activity,
+    ) {
         applicationContext = context.applicationContext // Initialize applicationContext
         this.audioList = audioList
 
@@ -89,19 +111,236 @@ object MyExoPlayer {
             exoPlayer?.addListener(object : Player.Listener {
 
                 override fun onPlaybackStateChanged(playbackState: Int) {
-                    super.onPlaybackStateChanged(playbackState)
+                    if (playbackState == Player.STATE_ENDED) {
+                        if (queue!!.isNotEmpty()) {
 
+                            // Re-initialize ExoPlayer with the new list
+                            if (exoPlayer != null) {
+                                exoPlayer?.stop()
+                                exoPlayer?.clearMediaItems()
+                            }
+                            val upNext = queue?.removeAt(0)
+                            upNext?.apply {
+                                val mediaMetadataUpNext = MediaMetadata.Builder()
+                                    .setTitle(title)
+                                    .setArtist(artist)
+                                    .setArtworkUri(albumArtUri?.toUri())
+                                    .setExtras(Bundle().apply { putLong("id", id) })
+                                    .build()
 
-                }
+                                val item =
+                                    MediaItem.Builder().setUri(data)
+                                        .setMediaMetadata(mediaMetadataUpNext)
+                                        .build()
 
-                override fun onPlaylistMetadataChanged(mediaMetadata: MediaMetadata) {
-                    super.onPlaylistMetadataChanged(mediaMetadata)
+                                exoPlayer?.setMediaItem(item)
+                                exoPlayer?.prepare()
+                                exoPlayer?.play()
+                            }
+                        }
+                    }
+
 
                 }
 
 
                 override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                     super.onMediaItemTransition(mediaItem, reason)
+
+
+                    if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
+                        playNextSong()
+
+                    }
+                    if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT) {
+                        if (exoPlayer?.repeatMode == Player.REPEAT_MODE_ALL) {
+                            when (originalSequence) {
+                                true -> {
+                                    when (queue?.isNotEmpty()) {
+                                        true -> {
+                                            originalSequence = false
+                                            if (!originalIndexChanged) {
+                                                originalPosition =
+                                                    exoPlayer?.currentMediaItemIndex!!
+                                                originalIndexChanged = true
+                                            }
+                                            pendingAudioList = this@MyExoPlayer.audioList
+
+                                            // Re-initialize ExoPlayer with the new list
+                                            if (exoPlayer != null) {
+                                                exoPlayer?.stop()
+                                                exoPlayer?.clearMediaItems()
+                                            }
+
+                                            val upNext = queue?.removeAt(0)
+                                            upNext?.apply {
+                                                val mediaMetadataUpNext = MediaMetadata.Builder()
+                                                    .setTitle(title)
+                                                    .setArtist(artist)
+                                                    .setArtworkUri(albumArtUri?.toUri())
+                                                    .setExtras(Bundle().apply { putLong("id", id) })
+                                                    .build()
+
+                                                val item =
+                                                    MediaItem.Builder().setUri(data)
+                                                        .setMediaMetadata(mediaMetadataUpNext)
+                                                        .build()
+
+                                                exoPlayer?.setMediaItem(item)
+                                                exoPlayer?.prepare()
+                                                exoPlayer?.play()
+                                            }
+
+
+                                        }
+
+                                        false -> {
+                                            exoPlayer?.seekToNext()
+                                            exoPlayer?.play()
+
+                                        }
+
+                                        null -> {
+                                            exoPlayer?.seekToNext()
+                                            exoPlayer?.play()
+
+                                        }
+                                    }
+                                }
+
+                                false -> {
+                                    when (queue?.isNotEmpty()) {
+                                        true -> {
+                                            originalSequence = false
+                                            if (!originalIndexChanged) {
+                                                originalPosition = exoPlayer?.nextMediaItemIndex!!
+                                                originalIndexChanged = true
+                                            }
+                                            pendingAudioList = this@MyExoPlayer.audioList
+
+                                            // Re-initialize ExoPlayer with the new list
+                                            if (exoPlayer != null) {
+                                                exoPlayer?.stop()
+                                                exoPlayer?.clearMediaItems()
+                                            }
+
+                                            val upNext = queue?.removeAt(0)
+                                            upNext?.apply {
+                                                val mediaMetadataUpNext = MediaMetadata.Builder()
+                                                    .setTitle(title)
+                                                    .setArtist(artist)
+                                                    .setArtworkUri(albumArtUri?.toUri())
+                                                    .setExtras(Bundle().apply { putLong("id", id) })
+                                                    .build()
+
+                                                val item =
+                                                    MediaItem.Builder().setUri(data)
+                                                        .setMediaMetadata(mediaMetadataUpNext)
+                                                        .build()
+
+                                                exoPlayer?.setMediaItem(item)
+                                                exoPlayer?.prepare()
+                                                exoPlayer?.play()
+                                            }
+
+                                        }
+
+                                        false -> {
+                                            if (originalPosition != -1) {
+                                                // Check if there's a pending list
+                                                if (pendingAudioList != null) {
+
+                                                    // Re-initialize ExoPlayer with the new list
+                                                    if (exoPlayer != null) {
+                                                        exoPlayer?.stop()
+                                                        exoPlayer?.clearMediaItems()
+                                                    }
+                                                    val mediaItems =
+                                                        pendingAudioList!!.mapIndexed { _, audioModel ->
+                                                            val mediaMetadata =
+                                                                MediaMetadata.Builder()
+                                                                    .setTitle(audioModel.title) // Set other metadata as needed
+                                                                    .setArtist(audioModel.artist)
+                                                                    .setArtworkUri(audioModel.albumArtUri?.toUri())
+                                                                    .setExtras(Bundle().apply {
+                                                                        putLong(
+                                                                            "id",
+                                                                            audioModel.id
+                                                                        )
+                                                                    }) // Store ID in extras
+                                                                    .build()
+
+                                                            MediaItem.Builder()
+                                                                .setUri(audioModel.data)
+                                                                .setMediaMetadata(mediaMetadata)
+                                                                .build()
+                                                        }
+
+
+                                                    exoPlayer?.setMediaItems(mediaItems)
+                                                    exoPlayer?.prepare()
+
+                                                    exoPlayer?.seekTo(originalPosition, 0)
+                                                    exoPlayer?.play()
+                                                }
+                                                originalSequence = true
+                                                originalIndexChanged = false
+
+                                            }
+                                        }
+
+                                        null -> {
+                                            if (originalPosition != -1) {
+                                                // Check if there's a pending list
+                                                if (pendingAudioList != null) {
+
+                                                    // Re-initialize ExoPlayer with the new list
+                                                    if (exoPlayer != null) {
+                                                        exoPlayer?.stop()
+                                                        exoPlayer?.clearMediaItems()
+                                                    }
+                                                    val mediaItems =
+                                                        pendingAudioList!!.mapIndexed { _, audioModel ->
+                                                            val mediaMetadata =
+                                                                MediaMetadata.Builder()
+                                                                    .setTitle(audioModel.title) // Set other metadata as needed
+                                                                    .setArtist(audioModel.artist)
+                                                                    .setArtworkUri(audioModel.albumArtUri?.toUri())
+                                                                    .setExtras(Bundle().apply {
+                                                                        putLong(
+                                                                            "id",
+                                                                            audioModel.id
+                                                                        )
+                                                                    }) // Store ID in extras
+                                                                    .build()
+
+                                                            MediaItem.Builder()
+                                                                .setUri(audioModel.data)
+                                                                .setMediaMetadata(mediaMetadata)
+                                                                .build()
+                                                        }
+
+
+                                                    exoPlayer?.setMediaItems(mediaItems)
+                                                    exoPlayer?.prepare()
+
+                                                    exoPlayer?.seekTo(originalPosition, 0)
+                                                    exoPlayer?.play()
+                                                }
+                                                originalSequence = true
+                                                originalIndexChanged = false
+
+                                            }
+                                            originalSequence = true
+                                            originalIndexChanged = false
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
 
 
                     currentSong = mediaItem?.mediaMetadata
@@ -119,7 +358,6 @@ object MyExoPlayer {
 
                 override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
                     super.onMediaMetadataChanged(mediaMetadata)
-
 
                     currentSong = mediaMetadata
                     mediaMetadata?.let {
@@ -168,6 +406,9 @@ object MyExoPlayer {
 
             })
 
+
+            // Media Session setup
+
             val mediaItems = audioList.mapIndexed { _, audioModel ->
                 val mediaMetadata = MediaMetadata.Builder()
                     .setTitle(audioModel.title) // Set other metadata as needed
@@ -190,13 +431,13 @@ object MyExoPlayer {
 
             exoPlayer?.setMediaItems(mediaItems)
             exoPlayer?.prepare()
-            //exoPlayer?.repeatMode = Player.REPEAT_MODE_ALL
+            exoPlayer?.repeatMode = Player.REPEAT_MODE_ALL
 
         }
 
     }
 
-    private fun restorePlaylist(index: Int){
+    private fun restorePlaylist(index: Int) {
         if (index != -1) {
             // Check if there's a pending list
             if (pendingAudioList != null) {
@@ -238,7 +479,7 @@ object MyExoPlayer {
     }
 
 
-    fun playFromHere(index: Int, activity: Activity) {
+    fun playFromHere(index: Int) {
         if (index != -1) {
             // Check if there's a pending list
             if (pendingAudioList != null) {
@@ -249,11 +490,30 @@ object MyExoPlayer {
                 if (exoPlayer != null) {
                     exoPlayer?.stop()
                     exoPlayer?.clearMediaItems()
-                    exoPlayer?.release()
-                    exoPlayer = null
                 }
 
-                initialize(applicationContext, audioList as ArrayList<AudioModel>, activity)
+                val mediaItems = this.audioList!!.mapIndexed { _, audioModel ->
+                    val mediaMetadata = MediaMetadata.Builder()
+                        .setTitle(audioModel.title) // Set other metadata as needed
+                        .setArtist(audioModel.artist)
+                        .setArtworkUri(audioModel.albumArtUri?.toUri())
+                        .setExtras(Bundle().apply {
+                            putLong(
+                                "id",
+                                audioModel.id
+                            )
+                        }) // Store ID in extras
+                        .build()
+
+                    MediaItem.Builder()
+                        .setUri(audioModel.data)
+                        .setMediaMetadata(mediaMetadata)
+                        .build()
+                }
+
+
+                exoPlayer?.setMediaItems(mediaItems)
+                exoPlayer?.prepare()
             }
 
 
@@ -301,6 +561,16 @@ object MyExoPlayer {
     }
 
 
+    fun releasePlayer() {
+        if (exoPlayer != null) {
+            exoPlayer?.stop()
+            exoPlayer?.clearMediaItems()
+            exoPlayer?.release()
+            exoPlayer = null
+        }
+    }
+
+
     fun getNextSong(): AudioModel? {
         //val nextIndex = exoPlayer?.nextMediaItemIndex
         //return if (nextIndex != null && audioList != null && nextIndex in audioList!!.indices) {
@@ -311,7 +581,7 @@ object MyExoPlayer {
         return if (queue?.isNotEmpty() == true) {
             queue?.get(0)
         } else {
-            val nextIndex =  getNextIndex()
+            val nextIndex = getNextIndex()
 
             if (
                 nextIndex != null &&
@@ -325,7 +595,6 @@ object MyExoPlayer {
         }
 
     }
-
 
 
     fun getIsPlaying(): Boolean {
@@ -353,42 +622,44 @@ object MyExoPlayer {
 
     fun playNextSong() {
 
-        when(originalSequence){
+        when (originalSequence) {
             true -> {
-                when(queue?.isNotEmpty()){
+                when (queue?.isNotEmpty()) {
                     true -> {
-                            originalSequence = false
-                            if (!originalIndexChanged) {
-                                originalPosition = exoPlayer?.currentMediaItemIndex!!
-                                originalIndexChanged = true
-                            }
-                            pendingAudioList =  this@MyExoPlayer.audioList
+                        originalSequence = false
+                        if (!originalIndexChanged) {
+                            originalPosition = exoPlayer?.currentMediaItemIndex!!
+                            originalIndexChanged = true
+                        }
+                        pendingAudioList = this@MyExoPlayer.audioList
 
-                            // Re-initialize ExoPlayer with the new list
-                            if (exoPlayer != null) {
-                                exoPlayer?.stop()
-                                exoPlayer?.clearMediaItems()
-                            }
+                        // Re-initialize ExoPlayer with the new list
+                        if (exoPlayer != null) {
+                            exoPlayer?.stop()
+                            exoPlayer?.clearMediaItems()
+                        }
 
-                            val upNext = queue?.removeAt(0)
-                            upNext?.apply {
-                                val mediaMetadataUpNext = MediaMetadata.Builder()
-                                    .setTitle(title)
-                                    .setArtist(artist)
-                                    .setArtworkUri(albumArtUri?.toUri())
-                                    .setExtras(Bundle().apply { putLong("id", id) })
-                                    .build()
+                        val upNext = queue?.removeAt(0)
+                        upNext?.apply {
+                            val mediaMetadataUpNext = MediaMetadata.Builder()
+                                .setTitle(title)
+                                .setArtist(artist)
+                                .setArtworkUri(albumArtUri?.toUri())
+                                .setExtras(Bundle().apply { putLong("id", id) })
+                                .build()
 
-                                val item =
-                                    MediaItem.Builder().setUri(data).setMediaMetadata(mediaMetadataUpNext).build()
+                            val item =
+                                MediaItem.Builder().setUri(data)
+                                    .setMediaMetadata(mediaMetadataUpNext).build()
 
-                                exoPlayer?.setMediaItem(item)
-                                exoPlayer?.prepare()
-                                exoPlayer?.play()
-                            }
+                            exoPlayer?.setMediaItem(item)
+                            exoPlayer?.prepare()
+                            exoPlayer?.play()
+                        }
 
 
                     }
+
                     false -> {
                         exoPlayer?.seekToNext()
                         exoPlayer?.play()
@@ -404,7 +675,7 @@ object MyExoPlayer {
             }
 
             false -> {
-                when(queue?.isNotEmpty()){
+                when (queue?.isNotEmpty()) {
                     true -> {
                         originalSequence = false
                         if (!originalIndexChanged) {
@@ -429,7 +700,8 @@ object MyExoPlayer {
                                 .build()
 
                             val item =
-                                MediaItem.Builder().setUri(data).setMediaMetadata(mediaMetadataUpNext).build()
+                                MediaItem.Builder().setUri(data)
+                                    .setMediaMetadata(mediaMetadataUpNext).build()
 
                             exoPlayer?.setMediaItem(item)
                             exoPlayer?.prepare()
@@ -437,12 +709,14 @@ object MyExoPlayer {
                         }
 
                     }
+
                     false -> {
                         restorePlaylist(originalPosition)
                         originalSequence = true
                         originalIndexChanged = false
 
                     }
+
                     null -> {
                         restorePlaylist(originalPosition)
                         originalSequence = true
@@ -519,6 +793,7 @@ object MyExoPlayer {
         div.visibility = View.VISIBLE
 
     }
+
 }
 
 

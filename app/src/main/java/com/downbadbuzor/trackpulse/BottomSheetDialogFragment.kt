@@ -25,15 +25,14 @@ import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.downbadbuzor.trackpulse.databinding.BottomSheetPlayingBinding
-import com.downbadbuzor.trackpulse.model.AudioModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PlayingBottomSheetFragment(
     private val activity: Activity,
-    private val fragmentManager : FragmentManager
-): BottomSheetDialogFragment() {
+    private val fragmentManager: FragmentManager
+) : BottomSheetDialogFragment() {
 
     private lateinit var binding: BottomSheetPlayingBinding
     private lateinit var exoPlayer: ExoPlayer
@@ -51,13 +50,17 @@ class PlayingBottomSheetFragment(
 
         binding.playerView.player = exoPlayer
 
-        MyExoPlayer.getCurrentSong()?.let { currentSong  ->
+        MyExoPlayer.getCurrentSong()?.let { currentSong ->
 
-            setUi(currentSong.title.toString(),  currentSong.artist.toString(), currentSong.artworkUri!!.toString())
+            setUi(
+                currentSong.title.toString(),
+                currentSong.artist.toString(),
+                currentSong.artworkUri!!.toString()
+            )
 
         }
 
-        if(MyExoPlayer.getIsShuffled()){
+        if (MyExoPlayer.getIsShuffled()) {
             binding.playingShuffle.setImageResource(R.drawable.playing_shuffle)
         }
 
@@ -67,7 +70,7 @@ class PlayingBottomSheetFragment(
 
         if (MyExoPlayer.getIsPlaying()) {
             binding.playPause.setImageResource(R.drawable.playing_pause)
-        }else{
+        } else {
             binding.playPause.setImageResource(R.drawable.playing_play)
         }
 
@@ -85,14 +88,16 @@ class PlayingBottomSheetFragment(
 
         //repeat mode
 
-        when(exoPlayer.repeatMode){
+        when (exoPlayer.repeatMode) {
             Player.REPEAT_MODE_OFF -> {
                 binding.playingRepeat.setImageResource(R.drawable.playing_repeat)
             }
+
             Player.REPEAT_MODE_ALL -> {
 
                 binding.playingRepeat.setImageResource(R.drawable.playing_repeat_all)
             }
+
             Player.REPEAT_MODE_ONE -> {
                 binding.playingRepeat.setImageResource(R.drawable.playing_repeat_one)
             }
@@ -100,22 +105,23 @@ class PlayingBottomSheetFragment(
         }
 
         binding.playingRepeat.setOnClickListener {
-          when(exoPlayer.repeatMode){
-              Player.REPEAT_MODE_OFF -> {
-                  MyExoPlayer.setRepeatMode("ALL")
-                  binding.playingRepeat.setImageResource(R.drawable.playing_repeat_all)
-              }
-              Player.REPEAT_MODE_ALL -> {
-                  MyExoPlayer.setRepeatMode("ONE")
-                  binding.playingRepeat.setImageResource(R.drawable.playing_repeat_one)
-              }
+            when (exoPlayer.repeatMode) {
+                Player.REPEAT_MODE_OFF -> {
+                    MyExoPlayer.setRepeatMode("ALL")
+                    binding.playingRepeat.setImageResource(R.drawable.playing_repeat_all)
+                }
 
-              Player.REPEAT_MODE_ONE -> {
-                  MyExoPlayer.setRepeatMode("OFF")
-                  binding.playingRepeat.setImageResource(R.drawable.playing_repeat)
-              }
+                Player.REPEAT_MODE_ALL -> {
+                    MyExoPlayer.setRepeatMode("ONE")
+                    binding.playingRepeat.setImageResource(R.drawable.playing_repeat_one)
+                }
 
-          }
+                Player.REPEAT_MODE_ONE -> {
+                    MyExoPlayer.setRepeatMode("OFF")
+                    binding.playingRepeat.setImageResource(R.drawable.playing_repeat)
+                }
+
+            }
         }
 
 
@@ -140,10 +146,18 @@ class PlayingBottomSheetFragment(
                     super.onMediaMetadataChanged(mediaMetadata)
 
                     MyExoPlayer.getCurrentSong()?.let { currentSong ->
-                        setUi(currentSong.title.toString(), currentSong.artist.toString(), currentSong.artworkUri?.toString() ?: "")
+                        setUi(
+                            currentSong.title.toString(),
+                            currentSong.artist.toString(),
+                            currentSong.artworkUri?.toString() ?: ""
+                        )
                     }
                     MyExoPlayer.getNextSong()?.let { nextSong -> // Use let for nextSong as well
-                        setUpNext(nextSong.title, nextSong.artist, nextSong.albumArtUri?.toString() ?: "")
+                        setUpNext(
+                            nextSong.title,
+                            nextSong.artist,
+                            nextSong.albumArtUri?.toString() ?: ""
+                        )
                     }
                 }
 
@@ -186,7 +200,8 @@ class PlayingBottomSheetFragment(
             while (true) {
                 val duration = exoPlayer.duration
                 val position = exoPlayer.currentPosition
-                val currentTimeString = formatTime(exoPlayer.currentPosition)// Current position in milliseconds
+                val currentTimeString =
+                    formatTime(exoPlayer.currentPosition)// Current position in milliseconds
                 val endTimeString = formatTime(exoPlayer.duration)// Total duration in milliseconds
 
 
@@ -201,7 +216,7 @@ class PlayingBottomSheetFragment(
         }
 
 
-        binding.playPause.setOnClickListener{
+        binding.playPause.setOnClickListener {
             // Trigger haptic feedback
             it.performHapticFeedback(
                 HapticFeedbackConstants.VIRTUAL_KEY,
@@ -214,11 +229,21 @@ class PlayingBottomSheetFragment(
 
             // Your existing click handling logic
             if (MyExoPlayer.getIsPlaying()) {
-                binding.playPause.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.rotate_left))
+                binding.playPause.startAnimation(
+                    AnimationUtils.loadAnimation(
+                        activity,
+                        R.anim.rotate_left
+                    )
+                )
                 MyExoPlayer.pause()
 
             } else {
-                binding.playPause.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.rotate_right))
+                binding.playPause.startAnimation(
+                    AnimationUtils.loadAnimation(
+                        activity,
+                        R.anim.rotate_right
+                    )
+                )
                 MyExoPlayer.resume()
             }
         }
@@ -236,8 +261,7 @@ class PlayingBottomSheetFragment(
             if (MyExoPlayer.getIsShuffled()) {
                 MyExoPlayer.shuffle(false)
                 binding.playingShuffle.setImageResource(R.drawable.playing_shuffle_off)
-            }
-            else{
+            } else {
                 MyExoPlayer.shuffle(true)
                 binding.playingShuffle.setImageResource(R.drawable.playing_shuffle)
             }
@@ -265,7 +289,7 @@ class PlayingBottomSheetFragment(
         return binding.root
     }
 
-    private fun setUi(title: String, artist: String, albumArtUri: String){
+    private fun setUi(title: String, artist: String, albumArtUri: String) {
         binding.playingSongTitle.text = title
         binding.playingSongArtist.text = artist
 
@@ -276,31 +300,64 @@ class PlayingBottomSheetFragment(
             .into(binding.albumArtPlaying)
 
 
-
         // Load the image using Glide
         Glide.with(binding.playingBottomSheetMain.context)
             .asBitmap()
             .error(R.color.default_color)
             .load(albumArtUri)
             .into(object : CustomTarget<Bitmap>() {
-                override fun onResourceReady(resource: Bitmap, transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?) {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
+                ) {
                     Palette.from(resource).generate { palette ->
-                        val dominantColor = palette?.getDarkMutedColor(ContextCompat.getColor(binding.playingBottomSheetMain.context, R.color.default_color))
-                        val vibrantColor = palette?.getVibrantColor(ContextCompat.getColor(binding.playingBottomSheetMain.context, R.color.default_color))
-                        val rippleColor = palette?.getDominantColor(ContextCompat.getColor(binding.playingBottomSheetMain.context, R.color.default_color))
+                        val dominantColor = palette?.getDarkMutedColor(
+                            ContextCompat.getColor(
+                                binding.playingBottomSheetMain.context,
+                                R.color.default_color
+                            )
+                        )
+                        val vibrantColor = palette?.getVibrantColor(
+                            ContextCompat.getColor(
+                                binding.playingBottomSheetMain.context,
+                                R.color.default_color
+                            )
+                        )
+                        val rippleColor = palette?.getDominantColor(
+                            ContextCompat.getColor(
+                                binding.playingBottomSheetMain.context,
+                                R.color.default_color
+                            )
+                        )
 
                         binding.playPause.rippleColor =
-                            rippleColor ?: ContextCompat.getColor(binding.playPause.context, R.color.default_color)
+                            rippleColor ?: ContextCompat.getColor(
+                                binding.playPause.context,
+                                R.color.default_color
+                            )
 
-                        binding.playingBottomSheetMain.setBackgroundColor(dominantColor ?: ContextCompat.getColor(binding.playingBottomSheetMain.context, R.color.default_color))
+                        binding.playingBottomSheetMain.setBackgroundColor(
+                            dominantColor ?: ContextCompat.getColor(
+                                binding.playingBottomSheetMain.context,
+                                R.color.default_color
+                            )
+                        )
 
                         // Fix: Check if background is not null before setting tint
                         val playPauseBackground = binding.playPause.background
                         if (playPauseBackground != null) {
-                            playPauseBackground.setTint(vibrantColor ?: ContextCompat.getColor(binding.playPause.context, R.color.default_color))
+                            playPauseBackground.setTint(
+                                vibrantColor ?: ContextCompat.getColor(
+                                    binding.playPause.context,
+                                    R.color.default_color
+                                )
+                            )
                         } else {
                             // Handle the case where background is null, e.g., log a warning
-                            Log.w("PlayingBottomSheetFragment", "Play/Pause button background is null")
+                            Log.w(
+                                "PlayingBottomSheetFragment",
+                                "Play/Pause button background is null"
+                            )
                         }
 
                     }
@@ -312,9 +369,9 @@ class PlayingBottomSheetFragment(
             })
 
 
-
     }
-    private fun setUpNext(title: String, artist: String, albumArtUri: String){
+
+    private fun setUpNext(title: String, artist: String, albumArtUri: String) {
         binding.audioTitleNext.text = title
         binding.audioArtistNext.text = artist
 
@@ -327,6 +384,7 @@ class PlayingBottomSheetFragment(
 
         binding.upnext.visibility = View.VISIBLE
     }
+
     private fun formatTime(timeInMillis: Long): String {
         val totalSeconds = timeInMillis / 1000
         val minutes = totalSeconds / 60

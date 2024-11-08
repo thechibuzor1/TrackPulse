@@ -6,7 +6,7 @@ plugins {
 android {
     namespace = "com.downbadbuzor.trackpulse"
     compileSdk = 34
-
+    
     defaultConfig {
         applicationId = "com.downbadbuzor.trackpulse"
         minSdk = 33
@@ -50,9 +50,11 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation (libs.glide)
+    implementation(libs.glide)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.exoplayer.dash)
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.palette.ktx)
+
+    implementation(libs.androidx.media3.session)
 }
