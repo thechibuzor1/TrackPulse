@@ -1,6 +1,5 @@
 package com.downbadbuzor.trackpulse
 
-import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,14 +13,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 
 class QueueList(
-    private val fragmentManager : FragmentManager
-)
- : BottomSheetDialogFragment() {
+    private val fragmentManager: FragmentManager
+) : BottomSheetDialogFragment() {
 
     private lateinit var binding: QueueBinding
     private lateinit var adapter: QueueAdapter
 
-    private var audioList:  List<AudioModel>? = null
+    private var audioList: List<AudioModel>? = null
     private var usingQueue: Boolean = false
 
     override fun onCreateView(
@@ -30,16 +28,16 @@ class QueueList(
     ): View? {
         binding = QueueBinding.inflate(inflater, container, false)
 
-       if(MyExoPlayer.getQueue().isNullOrEmpty()){
-           audioList = MyExoPlayer.getAudioList()
-           usingQueue = false
+        if (MyExoPlayer.getQueue().isNullOrEmpty()) {
+            audioList = MyExoPlayer.getAudioList()
+            usingQueue = false
 
-        }else{
-           audioList =  MyExoPlayer.getQueue()
-           usingQueue = true
+        } else {
+            audioList = MyExoPlayer.getQueue()
+            usingQueue = true
         }
 
-        adapter = QueueAdapter(audioList!!,fragmentManager, usingQueue)
+        adapter = QueueAdapter(audioList!!, fragmentManager, usingQueue)
 
         binding.queueList.layoutManager = LinearLayoutManager(requireContext())
         binding.queueList.adapter = adapter
@@ -47,9 +45,10 @@ class QueueList(
 
         // Scroll to current media item position
 
-        if(!usingQueue) {
+        if (!usingQueue) {
             binding.queueList.scrollToPosition(MyExoPlayer.getNextIndex())
             binding.clearBtn.visibility = View.GONE
+            binding.warning.visibility = View.GONE
         }
 
         binding.clearBtn.setOnClickListener {

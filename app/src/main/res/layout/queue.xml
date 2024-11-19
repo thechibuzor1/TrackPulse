@@ -10,8 +10,7 @@
         android:layout_width="40dp"
         android:layout_height="3dp"
         android:layout_gravity="center"
-        app:dividerColor="@color/gray"
-        />
+        app:dividerColor="@color/gray" />
 
     <TextView
         android:layout_marginVertical="16dp"
@@ -21,8 +20,32 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="16sp"
-        android:fontFamily="sans-serif-black"
-        />
+        android:fontFamily="sans-serif-black" />
+
+    <LinearLayout
+        android:id="@+id/warning"
+        android:paddingHorizontal="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_gravity="center_vertical"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:contentDescription="warning"
+            android:src="@drawable/warning" />
+
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Playback may be irregular, especially while using the notification controls"
+            android:layout_marginStart="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/clear_btn"
@@ -35,14 +58,12 @@
         android:textStyle="bold"
         android:textSize="16sp"
         android:paddingHorizontal="16dp"
-        android:fontFamily="sans-serif-black"
-        />
+        android:fontFamily="sans-serif-black" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/queue_list"
-        />
-
+        android:id="@+id/queue_list" />
 
 
 </LinearLayout>

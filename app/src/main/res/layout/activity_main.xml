@@ -166,7 +166,7 @@
             android:id="@+id/playing_bottom_sheet_cover"
             android:layout_marginBottom="16dp"
             android:layout_marginHorizontal="16dp"
-            app:cardCornerRadius="16dp">
+            app:cardCornerRadius="8dp">
 
 
             <RelativeLayout
@@ -185,7 +185,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     app:strokeColor="@android:color/transparent"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="8dp"
                     app:cardCornerRadius="8dp">
 
                     <ImageView
@@ -222,6 +222,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:textStyle="bold"
                         android:maxLines="1"
                         android:textColor="@color/gray" />
 
