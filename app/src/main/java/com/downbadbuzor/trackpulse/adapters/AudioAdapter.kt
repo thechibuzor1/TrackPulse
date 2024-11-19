@@ -1,11 +1,9 @@
 package com.downbadbuzor.trackpulse.adapters
 
 import android.app.Activity
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.SearchView
-import androidx.core.content.ContextCompat.startForegroundService
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -14,7 +12,6 @@ import com.downbadbuzor.trackpulse.MyExoPlayer
 import com.downbadbuzor.trackpulse.R
 import com.downbadbuzor.trackpulse.databinding.AudioItemBinding
 import com.downbadbuzor.trackpulse.model.AudioModel
-import com.downbadbuzor.trackpulse.service.AudioService
 
 
 class AudioAdapter(
@@ -24,14 +21,6 @@ class AudioAdapter(
     RecyclerView.Adapter<AudioAdapter.AudioViewHolder>() {
     private val songs = mutableListOf<AudioModel>()
 
-
-    private fun startService() {
-        if (!MyExoPlayer.getIsServiceRunning()) {
-            val intent = Intent(activity, AudioService::class.java) // Use activity context
-            startForegroundService(activity, intent) // Start foreground service
-            MyExoPlayer.setIsServiceRunning(true) // Update service state
-        }
-    }
 
     fun updateExoplayerListFromSearch(newSongs: List<AudioModel>) {
         songs.clear()
@@ -101,7 +90,6 @@ class AudioAdapter(
         holder.itemView.setOnClickListener {
             val search = activity.findViewById<SearchView>(R.id.search)
             MyExoPlayer.playFromHere(position)
-            startService()
             search.clearFocus()
         }
         holder.itemView.setOnLongClickListener {

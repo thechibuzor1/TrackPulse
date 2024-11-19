@@ -6,7 +6,7 @@ plugins {
 android {
     namespace = "com.downbadbuzor.trackpulse"
     compileSdk = 34
-    
+
     defaultConfig {
         applicationId = "com.downbadbuzor.trackpulse"
         minSdk = 33
@@ -58,3 +58,4 @@ dependencies {
 
     implementation(libs.androidx.media3.session)
 }
+

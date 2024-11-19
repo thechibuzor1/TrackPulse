@@ -3,6 +3,7 @@ package com.downbadbuzor.trackpulse
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startForegroundService
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -19,6 +21,7 @@ import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.downbadbuzor.trackpulse.model.AudioModel
+import com.downbadbuzor.trackpulse.service.AudioService
 
 
 object MyExoPlayer {
@@ -40,6 +43,15 @@ object MyExoPlayer {
     fun setIsServiceRunning(isRunning: Boolean) {
         isServiceRunning = isRunning
     }
+
+    private fun startService(activity: Activity) {
+        if (!this@MyExoPlayer.getIsServiceRunning()) {
+            val intent = Intent(activity, AudioService::class.java) // Use activity context
+            startForegroundService(activity, intent) // Start foreground service
+            this@MyExoPlayer.setIsServiceRunning(true) // Update service state
+        }
+    }
+
 
     private var isShuffled = false
 
@@ -382,6 +394,8 @@ object MyExoPlayer {
                         this@MyExoPlayer.isPlaying = true
                         giantplay.setImageResource(R.drawable.giant_pause)
                         play_pause_home.setImageResource(R.drawable.round_pause_24)
+                        this@MyExoPlayer.startService(activity)
+
                     } else {
                         giantplay.setImageResource(R.drawable.giant_play)
                         play_pause_home.setImageResource(R.drawable.bottom_play)

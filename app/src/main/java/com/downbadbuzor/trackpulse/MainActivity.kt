@@ -3,11 +3,11 @@ package com.downbadbuzor.trackpulse
 
 import android.content.ContentUris
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import android.widget.SearchView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.downbadbuzor.trackpulse.adapters.AudioAdapter
 import com.downbadbuzor.trackpulse.databinding.ActivityMainBinding
 import com.downbadbuzor.trackpulse.model.AudioModel
-import com.downbadbuzor.trackpulse.service.AudioService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -38,19 +37,9 @@ class MainActivity : AppCompatActivity() {
     private var searchJob: Job? = null
 
 
-    private fun startService() {
-        if (!MyExoPlayer.getIsServiceRunning()) {
-            val intent = Intent(this, AudioService::class.java)
-            startForegroundService(intent)
-            MyExoPlayer.setIsServiceRunning(true)
-        }
-    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-
         audioList = ArrayList()
 
         enableEdgeToEdge()
@@ -87,7 +76,6 @@ class MainActivity : AppCompatActivity() {
 
             } else {
                 MyExoPlayer.resume()
-                startService()
             }
         }
 
@@ -140,7 +128,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
         checkPermissions()
         // Initialize and show the bottom sheet
 
@@ -168,21 +155,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadAudioFiles() {
-        audioList = getAllAudioFromDevice(this)
+        lifecycleScope.launch(Dispatchers.IO) {
+            audioList = getAllAudioFromDevice(this@MainActivity)
+            audioList.sortBy { it.title }
 
-        //sort by default: title
-        audioList.sortBy { it.title }
-
-        binding.num.text =
-            if (audioList.size <= 1) "${audioList.size} track" else "${audioList.size} tracks"
-
-        audioAdapter = AudioAdapter(this, supportFragmentManager)
-        audioAdapter.addSongs(audioList)
-
-        binding.recyclerView.adapter = audioAdapter
-
-        MyExoPlayer.initialize(this, audioList, this)
-
+            withContext(Dispatchers.Main) {
+                binding.num.text =
+                    if (audioList.size <= 1) "${audioList.size} track" else "${audioList.size} tracks"
+                audioAdapter = AudioAdapter(this@MainActivity, supportFragmentManager)
+                audioAdapter.addSongs(audioList)
+                binding.recyclerView.adapter = audioAdapter
+                MyExoPlayer.initialize(this@MainActivity, audioList, this@MainActivity)
+                binding.loadingIndicator.visibility = View.GONE // Hide loading indicator
+                binding.scrollView.visibility = View.VISIBLE // Show the scrollable content
+            }
+        }
     }
 
     private fun filterSongs(query: String) {
