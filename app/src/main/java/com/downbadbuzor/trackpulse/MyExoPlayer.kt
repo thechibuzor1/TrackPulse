@@ -387,17 +387,17 @@ object MyExoPlayer {
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     super.onIsPlayingChanged(isPlaying)
                     //giant pause play
-                    val giantplay = activity.findViewById<ImageView>(R.id.giant_play)
+                    //val giantplay = activity.findViewById<ImageView>(R.id.giant_play)
                     val play_pause_home = activity.findViewById<ImageView>(R.id.play_pause_home)
 
                     if (isPlaying) {
                         this@MyExoPlayer.isPlaying = true
-                        giantplay.setImageResource(R.drawable.giant_pause)
+                        // giantplay.setImageResource(R.drawable.giant_pause)
                         play_pause_home.setImageResource(R.drawable.round_pause_24)
                         this@MyExoPlayer.startService(activity)
 
                     } else {
-                        giantplay.setImageResource(R.drawable.giant_play)
+                        // giantplay.setImageResource(R.drawable.giant_play)
                         play_pause_home.setImageResource(R.drawable.bottom_play)
                         this@MyExoPlayer.isPlaying = false
                     }
@@ -760,10 +760,9 @@ object MyExoPlayer {
         val div = activity.findViewById<View>(R.id.playing_bottom_sheet)
 
 
-
-
         playing.text = title
         artist.text = artistName
+
 
 
         Glide.with(album.context)
@@ -804,7 +803,10 @@ object MyExoPlayer {
                 }
             })
 
+
+
         div.visibility = View.VISIBLE
+
 
     }
 

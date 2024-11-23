@@ -7,7 +7,7 @@
     android:id="@+id/main_layout"
     tools:context=".MainActivity">
 
-    <!-- Your existing content goes here -->
+
     <RelativeLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
@@ -15,7 +15,6 @@
 
         <androidx.core.widget.NestedScrollView
             android:visibility="gone"
-            android:layout_above="@+id/playing_bottom_sheet_cover"
             android:id="@+id/scrollView"
             android:fillViewport="true"
             android:layout_width="match_parent"
@@ -23,6 +22,7 @@
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -33,6 +33,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="32dp"
+                    android:layout_marginBottom="16dp"
                     android:gravity="center_vertical">
 
                     <ImageView
@@ -52,97 +53,38 @@
                 </LinearLayout>
 
 
-                <RelativeLayout
-
-                    android:layout_margin="16dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <SearchView
-                        android:focusable="false"
-                        android:focusedByDefault="false"
-                        android:focusableInTouchMode="false"
-                        android:queryHint="Search"
-                        android:queryBackground="@null"
-                        android:background="@drawable/search_bg"
-                        android:layout_toStartOf="@+id/sort"
-                        android:id="@+id/search"
-                        android:layout_centerVertical="true"
-                        android:iconifiedByDefault="false"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-
-                        android:layout_marginEnd="8dp" />
-
-                    <Button
-                        android:id="@+id/sort"
-                        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog.Flush"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-
-                        android:text="Sort" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/sub_header"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:id="@+id/go_to_all"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:layout_margin="16dp">
 
-                    <LinearLayout
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/playlist_cover"
+                        android:backgroundTint="?attr/colorPrimaryContainer"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        app:strokeColor="@android:color/transparent"
+                        android:layout_marginBottom="2dp"
+                        app:cardCornerRadius="8dp">
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/note" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="All Songs"
+                        android:fontFamily="sans-serif-medium"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Local Files"
-                            android:textSize="24sp"
-                            android:fontFamily="sans-serif-medium"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/num"
-                            android:textSize="16sp"
-                            android:fontFamily="sans-serif-medium"
-                            android:layout_marginVertical="8dp" />
-                    </LinearLayout>
-
-                    <ImageView
-                        android:id="@+id/shuffle"
-                        android:layout_centerVertical="true"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_toStartOf="@id/giant_play"
-                        android:src="@drawable/shuffle"
-                        android:layout_marginEnd="4dp" />
-
-                    <ImageView
-                        android:layout_centerVertical="true"
-                        android:id="@+id/giant_play"
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
-                        android:layout_alignParentEnd="true"
-                        android:src="@drawable/giant_play" />
-
-                </RelativeLayout>
-
-
-                <androidx.recyclerview.widget.RecyclerView
-
-                    android:id="@+id/recyclerView"
-                    android:nestedScrollingEnabled="false"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="8dp" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
@@ -155,22 +97,21 @@
             android:indeterminate="true" />
 
         <!-- Bottom Sheet for Music Controls -->
-
         <com.google.android.material.card.MaterialCardView
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
             app:strokeColor="@android:color/transparent"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             android:visibility="visible"
-            android:id="@+id/playing_bottom_sheet_cover"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/playing_bottom_sheet_cover_home"
             android:layout_marginBottom="16dp"
             android:layout_marginHorizontal="16dp"
             app:cardCornerRadius="8dp">
 
 
             <RelativeLayout
-                android:visibility="gone"
+                android:visibility="visible"
                 android:id="@+id/playing_bottom_sheet"
                 android:padding="8dp"
                 android:background="@drawable/bottom_panel"
@@ -199,33 +140,32 @@
 
 
                 <LinearLayout
-                    android:layout_centerVertical="true"
-                    android:layout_toStartOf="@+id/play_pause_home"
-                    android:layout_toEndOf="@+id/albumArtCardView_home"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_toStartOf="@+id/play_pause_home"
+                    android:layout_toEndOf="@+id/albumArtCardView_home"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/playing_song_title_home"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"
                         android:layout_marginBottom="2dp"
                         android:fontFamily="sans-serif-medium"
-                        android:textStyle="bold"
                         android:maxLines="1"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/playing_song_artist_home"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
                         android:fontFamily="sans-serif-medium"
-                        android:textStyle="bold"
                         android:maxLines="1"
-                        android:textColor="@color/gray" />
+                        android:textColor="@color/gray"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
 
                 </LinearLayout>

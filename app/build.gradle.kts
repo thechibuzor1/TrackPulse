@@ -1,7 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.android) version "2.0.21"
+    id("com.google.devtools.ksp")
 }
+
 
 android {
     namespace = "com.downbadbuzor.trackpulse"
@@ -57,5 +59,15 @@ dependencies {
     implementation(libs.androidx.palette.ktx)
 
     implementation(libs.androidx.media3.session)
+
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+
+    //room
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    //Gson
+    implementation(libs.gson)
 }
 

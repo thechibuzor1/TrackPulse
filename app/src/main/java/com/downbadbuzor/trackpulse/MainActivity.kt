@@ -3,12 +3,12 @@ package com.downbadbuzor.trackpulse
 
 import android.content.ContentUris
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
-import android.widget.SearchView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -16,25 +16,18 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.downbadbuzor.trackpulse.adapters.AudioAdapter
 import com.downbadbuzor.trackpulse.databinding.ActivityMainBinding
 import com.downbadbuzor.trackpulse.model.AudioModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var audioAdapter: AudioAdapter
+
     private lateinit var audioList: ArrayList<AudioModel>
     private lateinit var bottomSheetFragment: PlayingBottomSheetFragment
-
-    private lateinit var sortModal: SortModal
-    private var searchJob: Job? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,33 +43,12 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        checkPermissions()
+        // Initialize and show the bottom sheet
 
-        binding.subHeader.setOnClickListener {
-            binding.search.clearFocus()
-        }
-
-        binding.playingBottomSheet.setOnClickListener {
-            binding.search.clearFocus()
+        binding.playingBottomSheetCoverHome.setOnClickListener {
             bottomSheetFragment = PlayingBottomSheetFragment(this, supportFragmentManager)
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
-        }
-
-        binding.sort.setOnClickListener {
-            binding.search.clearFocus()
-            sortModal = SortModal(audioAdapter, audioList)
-            sortModal.show(supportFragmentManager, sortModal.tag)
-        }
-
-        binding.giantPlay.setOnClickListener {
-            binding.search.clearFocus()
-            if (MyExoPlayer.getIsPlaying()) {
-                MyExoPlayer.pause()
-
-
-            } else {
-                MyExoPlayer.resume()
-            }
         }
 
         binding.playPauseHome.setOnClickListener {
@@ -88,50 +60,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.shuffle.setOnClickListener {
-            binding.search.clearFocus()
-            if (MyExoPlayer.getIsShuffled()) {
-                MyExoPlayer.shuffle(false)
-            } else {
-                MyExoPlayer.shuffle(true)
-            }
+        binding.goToAll.setOnClickListener {
+            val intent = Intent(
+                this,
+                PlaylistActivity::class.java
+            )
+            startActivity(intent)
         }
-
-
-        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-
-                binding.search.clearFocus()
-                return false // Don't handle submit, just use onQueryTextChange
-
-
-            }
-
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                searchJob?.cancel()
-                searchJob = lifecycleScope.launch {
-                    delay(300) // Debounce delay (300ms)
-                    newText?.let { filterSongs(it) }
-                }
-                return true
-            }
-        })
-        binding.search.setOnQueryTextFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                binding.search.clearFocus()
-            }
-        }
-        binding.search.setOnClickListener {
-            binding.search.clearFocus()
-        }
-
-
-
-        checkPermissions()
-        // Initialize and show the bottom sheet
-
-
     }
 
 
@@ -160,30 +95,9 @@ class MainActivity : AppCompatActivity() {
             audioList.sortBy { it.title }
 
             withContext(Dispatchers.Main) {
-                binding.num.text =
-                    if (audioList.size <= 1) "${audioList.size} track" else "${audioList.size} tracks"
-                audioAdapter = AudioAdapter(this@MainActivity, supportFragmentManager)
-                audioAdapter.addSongs(audioList)
-                binding.recyclerView.adapter = audioAdapter
                 MyExoPlayer.initialize(this@MainActivity, audioList, this@MainActivity)
                 binding.loadingIndicator.visibility = View.GONE // Hide loading indicator
                 binding.scrollView.visibility = View.VISIBLE // Show the scrollable content
-            }
-        }
-    }
-
-    private fun filterSongs(query: String) {
-        lifecycleScope.launch(Dispatchers.Default) {
-            val filteredList = audioList.filter { song ->
-                song.title.lowercase().contains(query.lowercase()) ||
-                        song.artist.lowercase().contains(query.lowercase())
-            }
-            withContext(Dispatchers.Main) {
-                // Update adapter on the main thread
-                audioAdapter.updateExoplayerListFromSearch(filteredList)
-
-                binding.num.text =
-                    if (filteredList.size <= 1) "${filteredList.size} track" else "${filteredList.size} tracks"
             }
         }
     }
