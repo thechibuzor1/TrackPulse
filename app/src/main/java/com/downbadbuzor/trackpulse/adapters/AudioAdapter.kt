@@ -30,6 +30,12 @@ class AudioAdapter(
         notifyDataSetChanged()
     }
 
+    fun updateExoplayerList(newSongs: List<AudioModel>) {
+        songs.clear()
+        songs.addAll(newSongs)
+        MyExoPlayer.updateAudioList(newSongs)
+    }
+
     fun setCurrentSorting(sorting: String) {
         when (sorting) {
             "DEFAULT" -> songs.sortBy { it.title }

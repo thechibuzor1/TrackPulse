@@ -200,8 +200,28 @@ class PlaylistActivity : AppCompatActivity() {
                 loadPlaylist()
             }
         }
+
+        binding.scrollView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            val scrollThreshold = 1000 // Adjust this threshold as needed
+
+            if (scrollY > scrollThreshold && supportActionBar?.title != "All Songs") {
+                supportActionBar?.title = "All Songs"
+            } else if (scrollY <= scrollThreshold && supportActionBar?.title == "All Songs") {
+                supportActionBar?.title = "" // Reset title if scrolled back up
+            }
+        }
     }
 
+    override fun onStop() {
+        super.onStop()
+        Glide.with(this).pauseRequests()
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        Glide.with(this).resumeRequests()
+    }
 
     private suspend fun loadPlaylist() {
         withContext(Dispatchers.IO) {
@@ -213,7 +233,7 @@ class PlaylistActivity : AppCompatActivity() {
             // Update UI on the main thread
             binding.num.text =
                 if (audioList.size <= 1) "${audioList.size} track" else "${audioList.size} tracks"
-            audioAdapter.updateExoplayerListFromSearch(audioList)
+            audioAdapter.updateExoplayerList(audioList)
             binding.recyclerView.adapter = audioAdapter
 
             // Hide loading indicator and show content

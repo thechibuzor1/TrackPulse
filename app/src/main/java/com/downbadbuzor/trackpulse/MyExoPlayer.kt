@@ -4,22 +4,14 @@ package com.downbadbuzor.trackpulse
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startForegroundService
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.palette.graphics.Palette
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
 import com.downbadbuzor.trackpulse.model.AudioModel
 import com.downbadbuzor.trackpulse.service.AudioService
 
@@ -356,14 +348,6 @@ object MyExoPlayer {
 
 
                     currentSong = mediaItem?.mediaMetadata
-                    mediaItem?.mediaMetadata?.let {
-                        setDiv(
-                            activity,
-                            it.title.toString(),
-                            it.artist.toString(),
-                            it.artworkUri.toString()
-                        )
-                    }
 
 
                 }
@@ -372,14 +356,6 @@ object MyExoPlayer {
                     super.onMediaMetadataChanged(mediaMetadata)
 
                     currentSong = mediaMetadata
-                    mediaMetadata?.let {
-                        setDiv(
-                            activity,
-                            it.title.toString(),
-                            it.artist.toString(),
-                            it.artworkUri.toString()
-                        )
-                    }
 
                 }
 
@@ -752,63 +728,6 @@ object MyExoPlayer {
         return currentSong
     }
 
-
-    fun setDiv(activity: Activity, title: String, artistName: String, albumArtUri: String) {
-        val playing = activity.findViewById<TextView>(R.id.playing_song_title_home)
-        val artist = activity.findViewById<TextView>(R.id.playing_song_artist_home)
-        val album = activity.findViewById<ImageView>(R.id.albumArt_home)
-        val div = activity.findViewById<View>(R.id.playing_bottom_sheet)
-
-
-        playing.text = title
-        artist.text = artistName
-
-
-
-        Glide.with(album.context)
-            .load(albumArtUri)
-            .placeholder(R.drawable.vinyl)
-            .error(R.drawable.vinyl)
-            .into(album)
-
-
-        // Load the image using Glide
-        Glide.with(div.context)
-            .asBitmap()
-            .error(R.color.default_color)
-            .load(albumArtUri)
-            .into(object : CustomTarget<Bitmap>() {
-                override fun onResourceReady(
-                    resource: Bitmap,
-                    transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
-                ) {
-                    Palette.from(resource).generate { palette ->
-                        val dominantColor = palette?.getDarkMutedColor(
-                            ContextCompat.getColor(
-                                div.context,
-                                R.color.default_color
-                            )
-                        )
-                        div.setBackgroundColor(
-                            dominantColor ?: ContextCompat.getColor(
-                                div.context,
-                                R.color.default_color
-                            )
-                        )
-                    }
-                }
-
-                override fun onLoadCleared(placeholder: Drawable?) {
-                    // Optional: Handle placeholder or clearing the image
-                }
-            })
-
-
-
-        div.visibility = View.VISIBLE
-
-
-    }
 
 }
 

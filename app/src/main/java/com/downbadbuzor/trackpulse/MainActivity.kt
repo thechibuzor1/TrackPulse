@@ -3,8 +3,9 @@ package com.downbadbuzor.trackpulse
 
 import android.content.ContentUris
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -16,6 +17,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.palette.graphics.Palette
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
 import com.downbadbuzor.trackpulse.databinding.ActivityMainBinding
 import com.downbadbuzor.trackpulse.model.AudioModel
 import kotlinx.coroutines.Dispatchers
@@ -24,48 +31,56 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var mainBinding: ActivityMainBinding
+    private lateinit var bottomSheetFragment: PlayingBottomSheetFragment
+    private lateinit var exoPlayer: ExoPlayer
 
     private lateinit var audioList: ArrayList<AudioModel>
-    private lateinit var bottomSheetFragment: PlayingBottomSheetFragment
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        mainBinding = ActivityMainBinding.inflate(layoutInflater)
         audioList = ArrayList()
 
+
         enableEdgeToEdge()
-        setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+        setContentView(mainBinding.root)
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(mainBinding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             insets
         }
 
+
         checkPermissions()
         // Initialize and show the bottom sheet
 
-        binding.playingBottomSheetCoverHome.setOnClickListener {
+        mainBinding.playingBottomSheetCoverHome.setOnClickListener {
             bottomSheetFragment = PlayingBottomSheetFragment(this, supportFragmentManager)
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
 
-        binding.playPauseHome.setOnClickListener {
-            if (MyExoPlayer.getIsPlaying()) {
-                MyExoPlayer.pause()
+        mainBinding.goToAll.setOnClickListener {
 
-            } else {
-                MyExoPlayer.resume()
-            }
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, PlaylistFragment())
+                .addToBackStack("myFragmentTag") // Optional tag
+                .commit()
         }
 
-        binding.goToAll.setOnClickListener {
-            val intent = Intent(
-                this,
-                PlaylistActivity::class.java
-            )
-            startActivity(intent)
+
+    }
+
+    // Handling back navigation in activity
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            super.onBackPressed()
         }
     }
 
@@ -96,12 +111,93 @@ class MainActivity : AppCompatActivity() {
 
             withContext(Dispatchers.Main) {
                 MyExoPlayer.initialize(this@MainActivity, audioList, this@MainActivity)
-                binding.loadingIndicator.visibility = View.GONE // Hide loading indicator
-                binding.scrollView.visibility = View.VISIBLE // Show the scrollable content
+                mainBinding.loadingIndicator.visibility = View.GONE // Hide loading indicator
+                mainBinding.fragmentContainer.visibility =
+                    View.VISIBLE // Show the scrollable content
+
+                MyExoPlayer.getCurrentSong()?.let { currentSong ->
+
+                    setUi(
+                        currentSong.title.toString(),
+                        currentSong.artist.toString(),
+                        currentSong.artworkUri!!.toString()
+                    )
+
+                }
+
+
+                // update the components as songs change
+
+                exoPlayer = MyExoPlayer.getInstance()!!
+                exoPlayer?.addListener(
+                    object : Player.Listener {
+                        override fun onIsPlayingChanged(isPlaying: Boolean) {
+                        }
+
+                        override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+                            super.onMediaMetadataChanged(mediaMetadata)
+
+                            MyExoPlayer.getCurrentSong()?.let { currentSong ->
+                                setUi(
+                                    currentSong.title.toString(),
+                                    currentSong.artist.toString(),
+                                    currentSong.artworkUri?.toString() ?: ""
+                                )
+                            }
+
+                        }
+
+
+                    }
+                )
             }
         }
     }
 
+
+    private fun setUi(title: String, artist: String, albumArtUri: String) {
+        mainBinding.playingSongTitleHome.text = title
+        mainBinding.playingSongArtistHome.text = artist
+
+        Glide.with(mainBinding.albumArtHome.context)
+            .load(albumArtUri)
+            .placeholder(R.drawable.vinyl)
+            .error(R.drawable.vinyl)
+            .into(mainBinding.albumArtHome)
+
+
+        Glide.with(mainBinding.playingBottomSheet.context)
+            .asBitmap()
+            .error(R.color.default_color)
+            .load(albumArtUri)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
+                ) {
+                    Palette.from(resource).generate { palette ->
+                        val dominantColor = palette?.getDarkMutedColor(
+                            ContextCompat.getColor(
+                                mainBinding.playingBottomSheet.context,
+                                R.color.default_color
+                            )
+                        )
+                        mainBinding.playingBottomSheet.setBackgroundColor(
+                            dominantColor ?: ContextCompat.getColor(
+                                mainBinding.playingBottomSheet.context,
+                                R.color.default_color
+                            )
+                        )
+                    }
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    // Optional: Handle placeholder or clearing the image
+                }
+            })
+
+
+    }
 
     private fun getAllAudioFromDevice(context: Context): ArrayList<AudioModel> {
         val tempAudioList = ArrayList<AudioModel>()

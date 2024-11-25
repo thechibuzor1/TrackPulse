@@ -16,7 +16,7 @@
 
         <androidx.core.widget.NestedScrollView
 
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_below="@+id/my_toolbar"
             android:layout_above="@+id/playing_bottom_sheet_cover_playlist"
             android:id="@+id/scrollView"
@@ -146,7 +146,7 @@
         </androidx.core.widget.NestedScrollView>
 
         <ProgressBar
-            android:visibility="visible"
+            android:visibility="gone"
             android:id="@+id/loadingIndicator"
             android:layout_width="48dp"
             android:layout_height="48dp"

@@ -21,6 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TrackPulse">
         <activity
+            android:name=".BottomControls"
+            android:exported="false" />
+        <activity
             android:name=".PlaylistActivity"
             android:exported="false" />
         <activity

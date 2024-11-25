@@ -68,7 +68,7 @@ class AudioNotificationManager(
                 it.setUseFastForwardActionInCompactView(true)
                 it.setUseRewindActionInCompactView(true)
                 it.setUseNextActionInCompactView(true)
-                it.setPriority(NotificationCompat.PRIORITY_LOW)
+                it.setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 it.setPlayer(exoPlayer)
             }
     }
