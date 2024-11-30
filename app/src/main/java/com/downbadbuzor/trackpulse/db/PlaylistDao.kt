@@ -1,10 +1,10 @@
 package com.downbadbuzor.trackpulse.db
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PlaylistDao {
@@ -15,6 +15,10 @@ interface PlaylistDao {
     @Delete
     suspend fun deletePlaylist(playlist: Playlist)
 
-    @Query("SELECT * FROM playlist ORDER BY name ASC")
-    fun getPlaylists(): Flow<List<Playlist>>
+    @Query("SELECT * FROM PLAYLISTS ORDER BY name ASC")
+    fun getPlaylists(): LiveData<List<Playlist>>
+
+    @Query("SELECT * FROM PLAYLISTS WHERE id = :id")
+    fun getPlaylistById(id: Int): LiveData<Playlist>
+
 }

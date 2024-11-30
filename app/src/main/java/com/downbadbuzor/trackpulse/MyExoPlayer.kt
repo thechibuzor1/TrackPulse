@@ -22,6 +22,8 @@ object MyExoPlayer {
     private var currentSong: MediaMetadata? = null
 
     private var audioList: List<AudioModel>? = null
+    private var allAudioList: List<AudioModel>? = null
+
     private lateinit var applicationContext: Context // Add applicationContext
 
     private var isPlaying = false
@@ -87,6 +89,10 @@ object MyExoPlayer {
         return this@MyExoPlayer.audioList
     }
 
+    fun getAllAudioList(): List<AudioModel>? {
+        return this@MyExoPlayer.allAudioList
+    }
+
     fun getPlayer(): Player {
         return exoPlayer!!
     }
@@ -107,6 +113,7 @@ object MyExoPlayer {
     ) {
         applicationContext = context.applicationContext // Initialize applicationContext
         this.audioList = audioList
+        this.allAudioList = audioList
 
 
 

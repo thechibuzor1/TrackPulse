@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,14 +17,23 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.palette.graphics.Palette
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
+import com.downbadbuzor.trackpulse.Utils.UiUtils
+import com.downbadbuzor.trackpulse.adapters.PlaylistAdapter
 import com.downbadbuzor.trackpulse.databinding.ActivityMainBinding
+import com.downbadbuzor.trackpulse.db.Playlist
+import com.downbadbuzor.trackpulse.db.PlaylistRepo
+import com.downbadbuzor.trackpulse.db.PlaylistViewModel
+import com.downbadbuzor.trackpulse.db.PlaylistViewModelFactory
+import com.downbadbuzor.trackpulse.db.Playlistdb
 import com.downbadbuzor.trackpulse.model.AudioModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,12 +47,15 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var audioList: ArrayList<AudioModel>
 
+    lateinit var playlistViewModel: PlaylistViewModel
+
+    lateinit var playlistAdapter: PlaylistAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainBinding = ActivityMainBinding.inflate(layoutInflater)
         audioList = ArrayList()
-
 
         enableEdgeToEdge()
         setContentView(mainBinding.root)
@@ -56,6 +69,8 @@ class MainActivity : AppCompatActivity() {
 
 
         checkPermissions()
+        setupViewModel()
+
         // Initialize and show the bottom sheet
 
         mainBinding.playingBottomSheetCoverHome.setOnClickListener {
@@ -66,13 +81,26 @@ class MainActivity : AppCompatActivity() {
         mainBinding.goToAll.setOnClickListener {
 
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, PlaylistFragment())
+                .replace(R.id.fragment_container, PlaylistFragment.newInstance("ALL"))
                 .addToBackStack("myFragmentTag") // Optional tag
                 .commit()
+        }
+        mainBinding.createPlaylist.setOnClickListener {
+            savePlaylist()
         }
 
 
     }
+
+    private fun setupViewModel() {
+        val playlistRepository = PlaylistRepo(Playlistdb(this))
+        val viewModelProviderFactory = PlaylistViewModelFactory(application, playlistRepository)
+        playlistViewModel =
+            ViewModelProvider(this, viewModelProviderFactory)[PlaylistViewModel::class.java]
+
+        setUpRecyclerView()
+    }
+
 
     // Handling back navigation in activity
     @Deprecated("Deprecated in Java")
@@ -84,6 +112,65 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun updatePlaylistUi(playlist: List<Playlist>?) {
+        if (playlist.isNullOrEmpty()) {
+            mainBinding.playlistLayout.visibility = View.GONE
+            mainBinding.noPlaylist.visibility = View.VISIBLE
+        } else {
+            mainBinding.playlistLayout.visibility = View.VISIBLE
+            mainBinding.noPlaylist.visibility = View.GONE
+            // setUpRecyclerView()
+        }
+
+    }
+
+
+    private fun setUpRecyclerView() {
+
+        playlistAdapter = PlaylistAdapter(supportFragmentManager)
+        mainBinding.playlistRecyclerView.apply {
+            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            setHasFixedSize(true)
+            adapter = playlistAdapter
+        }
+
+        playlistViewModel.getAllPlaylists().observe(this) { playlist ->
+            playlistAdapter.differ.submitList(playlist)
+            updatePlaylistUi(playlist)
+        }
+
+
+        //playlistAdapter.differ.submitList(demoPlaylist)
+
+
+    }
+
+    private fun savePlaylist() {
+
+        val playlist =
+            Playlist(name = "New Playlist 787495948484u904", coverImage = "", songs = emptyList())
+        playlistViewModel.addPlaylist(playlist)
+        setUpRecyclerView()
+
+        UiUtils.showToast(this, "Playlist Saved")
+
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                if (supportFragmentManager.backStackEntryCount > 0) {
+                    supportFragmentManager.popBackStack()
+                } else {
+                    super.onBackPressed()
+                }
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     private fun checkPermissions() {
         val readAudioPermission = android.Manifest.permission.READ_MEDIA_AUDIO

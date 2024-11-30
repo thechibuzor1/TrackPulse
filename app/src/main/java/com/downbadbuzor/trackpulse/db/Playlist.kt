@@ -23,10 +23,10 @@ class AudioModelListConverter {
     }
 }
 
-@Entity
+@Entity(tableName = "playlists")
 data class Playlist(
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = 0,
+    val id: Int? = null,
     val name: String,
     val coverImage: String,
     val songs: List<AudioModel> = emptyList()

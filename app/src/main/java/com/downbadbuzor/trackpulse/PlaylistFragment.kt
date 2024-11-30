@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.downbadbuzor.trackpulse.adapters.AudioAdapter
 import com.downbadbuzor.trackpulse.databinding.FragmentPlaylistBinding
+import com.downbadbuzor.trackpulse.db.PlaylistViewModel
 import com.downbadbuzor.trackpulse.model.AudioModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -18,34 +19,30 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [PlaylistFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 class PlaylistFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private var id: String? = null
+
 
     private lateinit var binding: FragmentPlaylistBinding
     private lateinit var audioAdapter: AudioAdapter
     private lateinit var audioList: ArrayList<AudioModel>
 
+    lateinit var playlistViewModel: PlaylistViewModel
+
     private lateinit var sortModal: SortModal
     private var searchJob: Job? = null
+
+    private var playlistName: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            id = it.getString(ARG_PARAM1)
         }
     }
 
@@ -54,6 +51,8 @@ class PlaylistFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentPlaylistBinding.inflate(inflater, container, false)
+
+        playlistViewModel = (activity as MainActivity).playlistViewModel
 
         audioAdapter = AudioAdapter(requireActivity(), parentFragmentManager)
 
@@ -129,7 +128,7 @@ class PlaylistFragment : Fragment() {
 
         binding.root.post {
             lifecycleScope.launch {
-                loadPlaylist()
+                loadPlaylist(id!!)
             }
         }
 
@@ -137,9 +136,9 @@ class PlaylistFragment : Fragment() {
             val scrollThreshold = 1000 // Adjust this threshold as needed
 
             (activity as? AppCompatActivity)?.supportActionBar?.let { actionBar ->
-                if (scrollY > scrollThreshold && actionBar.title != "All Songs") {
-                    actionBar.title = "All Songs"
-                } else if (scrollY <= scrollThreshold && actionBar.title == "All Songs") {
+                if (scrollY > scrollThreshold && actionBar.title != playlistName) {
+                    actionBar.title = playlistName
+                } else if (scrollY <= scrollThreshold && actionBar.title == playlistName) {
                     actionBar.title = "" // Reset title if scrolled back up
                 }
             }
@@ -152,23 +151,40 @@ class PlaylistFragment : Fragment() {
     }
 
 
-    private suspend fun loadPlaylist() {
-        withContext(Dispatchers.IO) {
-            audioList = MyExoPlayer.getAudioList()!! as ArrayList<AudioModel>
-            audioList.sortBy { it.title }
+    private suspend fun loadPlaylist(id: String) {
+        if (id === "ALL") {
+            withContext(Dispatchers.IO) {
+                audioList = MyExoPlayer.getAllAudioList()!! as ArrayList<AudioModel>
+                audioList.sortBy { it.title }
+            }
+            // Update UI for "ALL" case on the main thread
+            withContext(Dispatchers.Main) {
+                playlistName = "All Songs"
+                updateUI()
+            }
+        } else {
+            // Move observe() call to lifecycleScope and update UI inside the observer
+            withContext(Dispatchers.Main) {
+                playlistViewModel.getPlaylistById(id?.toIntOrNull() ?: 0)
+                    .observe(viewLifecycleOwner) { playlist ->
+                        audioList = playlist.songs as ArrayList<AudioModel>
+                        audioList.sortBy { it.title }
+                        playlistName = playlist.name
+                        // Update UI after data is loaded
+                        updateUI()
+                    }
+            }
         }
+    }
 
-        withContext(Dispatchers.Main) {
-            // Update UI on the main thread
-            binding.num.text =
-                if (audioList.size <= 1) "${audioList.size} track" else "${audioList.size} tracks"
-            audioAdapter.updateExoplayerList(audioList)
-            binding.recyclerView.adapter = audioAdapter
-
-            // Hide loading indicator and show content
-            binding.loadingIndicator.visibility = View.GONE
-            binding.scrollView.visibility = View.VISIBLE
-        }
+    private fun updateUI() {
+        binding.playlistTitle.text = playlistName
+        binding.num.text =
+            if (audioList.size <= 1) "${audioList.size} track" else "${audioList.size} tracks"
+        audioAdapter.updateExoplayerList(audioList)
+        binding.recyclerView.adapter = audioAdapter
+        binding.loadingIndicator.visibility = View.GONE
+        binding.scrollView.visibility = View.VISIBLE
     }
 
     private fun filterSongs(query: String) {
@@ -188,22 +204,18 @@ class PlaylistFragment : Fragment() {
     }
 
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+    }
+
+
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment PlaylistFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(param1: String) =
             PlaylistFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
                 }
             }
     }
