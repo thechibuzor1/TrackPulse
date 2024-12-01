@@ -148,7 +148,11 @@ class MainActivity : AppCompatActivity() {
     private fun savePlaylist() {
 
         val playlist =
-            Playlist(name = "New Playlist 787495948484u904", coverImage = "", songs = emptyList())
+            Playlist(
+                name = "New Playlist 787495948484ukdjnkdjnkjdnkjndkndkjndknkdjnkjdnkjdnk904",
+                coverImage = "",
+                songs = emptyList()
+            )
         playlistViewModel.addPlaylist(playlist)
         setUpRecyclerView()
 

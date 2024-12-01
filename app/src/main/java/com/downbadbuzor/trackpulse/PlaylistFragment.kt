@@ -179,12 +179,18 @@ class PlaylistFragment : Fragment() {
 
     private fun updateUI() {
         binding.playlistTitle.text = playlistName
-        binding.num.text =
-            if (audioList.size <= 1) "${audioList.size} track" else "${audioList.size} tracks"
+        if (audioList.size <= 1) {
+            binding.num.text = "${audioList.size} track"
+            binding.topBtns.visibility = View.GONE
+        } else {
+            binding.num.text = "${audioList.size} tracks"
+            binding.topBtns.visibility = View.VISIBLE
+        }
         audioAdapter.updateExoplayerList(audioList)
         binding.recyclerView.adapter = audioAdapter
         binding.loadingIndicator.visibility = View.GONE
         binding.scrollView.visibility = View.VISIBLE
+
     }
 
     private fun filterSongs(query: String) {
