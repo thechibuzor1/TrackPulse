@@ -8,8 +8,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="16dp"
-        android:layout_margin="4dp"
+        app:cardElevation="8dp"
+        android:layout_margin="2dp"
         app:cardCornerRadius="8dp">
 
         <LinearLayout
@@ -17,7 +17,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:background="@drawable/rounded"
-            android:padding="16dp">
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="14dp">
 
             <TextView
                 android:layout_width="match_parent"
