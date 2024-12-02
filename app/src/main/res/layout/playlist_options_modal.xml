@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:paddingTop="16dp"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="40dp"
+        android:layout_height="3dp"
+        android:layout_gravity="center"
+        app:dividerColor="@color/gray" />
+
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/options_layout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/playlistName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Playlist Name"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="0.2dp"
+            android:layout_gravity="center"
+            app:dividerColor="@color/gray" />
+
+        <LinearLayout
+            android:id="@+id/edit_playlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/edit_pen" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit Playlist"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif-black"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:id="@+id/delete_playlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:src="@drawable/delete" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete Playlist"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif-black"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/create_playlist_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Give the playlist a name:"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="20sp"
+            android:layout_marginVertical="16dp"
+            android:layout_gravity="center" />
+
+
+        <EditText
+            android:id="@+id/enter_playlist_name"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:hint="Playlist Name"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="22sp" />
+
+        <Button
+            android:id="@+id/create_playlist"
+            android:layout_marginVertical="32dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="18sp" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

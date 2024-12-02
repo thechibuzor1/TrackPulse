@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.downbadbuzor.trackpulse.adapters.AudioAdapter
 import com.downbadbuzor.trackpulse.databinding.FragmentPlaylistBinding
+import com.downbadbuzor.trackpulse.db.Playlist
 import com.downbadbuzor.trackpulse.db.PlaylistViewModel
 import com.downbadbuzor.trackpulse.model.AudioModel
 import kotlinx.coroutines.Dispatchers
@@ -31,12 +32,15 @@ class PlaylistFragment : Fragment() {
     private lateinit var audioAdapter: AudioAdapter
     private lateinit var audioList: ArrayList<AudioModel>
 
-    lateinit var playlistViewModel: PlaylistViewModel
+    private lateinit var playlistViewModel: PlaylistViewModel
+
+    private lateinit var playlistOptionsModal: PlaylistOptionsModal
 
     private lateinit var sortModal: SortModal
     private var searchJob: Job? = null
 
     private var playlistName: String = ""
+    private lateinit var playlist: Playlist
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +54,7 @@ class PlaylistFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding = FragmentPlaylistBinding.inflate(inflater, container, false)
 
         playlistViewModel = (activity as MainActivity).playlistViewModel
@@ -144,6 +149,7 @@ class PlaylistFragment : Fragment() {
             }
         }
 
+
         // Inflate the layout for this fragment
         return binding.root
 
@@ -153,6 +159,7 @@ class PlaylistFragment : Fragment() {
 
     private suspend fun loadPlaylist(id: String) {
         if (id === "ALL") {
+            binding.optionsIcon.visibility = View.GONE
             withContext(Dispatchers.IO) {
                 audioList = MyExoPlayer.getAllAudioList()!! as ArrayList<AudioModel>
                 audioList.sortBy { it.title }
@@ -169,9 +176,18 @@ class PlaylistFragment : Fragment() {
                     .observe(viewLifecycleOwner) { playlist ->
                         audioList = playlist.songs as ArrayList<AudioModel>
                         audioList.sortBy { it.title }
+                        this@PlaylistFragment.playlist = playlist
                         playlistName = playlist.name
                         // Update UI after data is loaded
                         updateUI()
+
+                        binding.optionsIcon.setOnClickListener {
+                            playlistOptionsModal = PlaylistOptionsModal(playlist, "OPTIONS")
+                            playlistOptionsModal.show(
+                                parentFragmentManager,
+                                playlistOptionsModal.tag
+                            )
+                        }
                     }
             }
         }
@@ -182,9 +198,11 @@ class PlaylistFragment : Fragment() {
         if (audioList.size <= 1) {
             binding.num.text = "${audioList.size} track"
             binding.topBtns.visibility = View.GONE
+            binding.topActionBtns.visibility = View.GONE
         } else {
             binding.num.text = "${audioList.size} tracks"
             binding.topBtns.visibility = View.VISIBLE
+            binding.topActionBtns.visibility = View.VISIBLE
         }
         audioAdapter.updateExoplayerList(audioList)
         binding.recyclerView.adapter = audioAdapter
@@ -207,12 +225,6 @@ class PlaylistFragment : Fragment() {
                     if (filteredList.size <= 1) "${filteredList.size} track" else "${filteredList.size} tracks"
             }
         }
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
     }
 
 

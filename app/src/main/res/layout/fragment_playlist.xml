@@ -22,7 +22,16 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/my_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize" />
+                android:layout_height="?attr/actionBarSize">
+
+                <ImageView
+                    android:layout_marginEnd="8dp"
+                    android:id="@+id/options_icon"
+                    android:layout_width="48dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="end"
+                    android:src="@drawable/options" />
+            </androidx.appcompat.widget.Toolbar>
 
             <androidx.core.widget.NestedScrollView
 
@@ -42,6 +51,7 @@
                     android:orientation="vertical">
 
                     <RelativeLayout
+                        android:id="@+id/top_action_btns"
                         android:layout_marginHorizontal="16dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">

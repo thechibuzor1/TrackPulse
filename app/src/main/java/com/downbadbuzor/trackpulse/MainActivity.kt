@@ -26,7 +26,6 @@ import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
-import com.downbadbuzor.trackpulse.Utils.UiUtils
 import com.downbadbuzor.trackpulse.adapters.PlaylistAdapter
 import com.downbadbuzor.trackpulse.databinding.ActivityMainBinding
 import com.downbadbuzor.trackpulse.db.Playlist
@@ -43,6 +42,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mainBinding: ActivityMainBinding
     private lateinit var bottomSheetFragment: PlayingBottomSheetFragment
+
+    private lateinit var playlistOptionsModal: PlaylistOptionsModal
     private lateinit var exoPlayer: ExoPlayer
 
     private lateinit var audioList: ArrayList<AudioModel>
@@ -86,7 +87,9 @@ class MainActivity : AppCompatActivity() {
                 .commit()
         }
         mainBinding.createPlaylist.setOnClickListener {
-            savePlaylist()
+            playlistOptionsModal = PlaylistOptionsModal(operation = "CREATE")
+            playlistOptionsModal.show(supportFragmentManager, playlistOptionsModal.tag)
+
         }
 
 
@@ -144,22 +147,6 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-
-    private fun savePlaylist() {
-
-        val playlist =
-            Playlist(
-                name = "New Playlist 787495948484ukdjnkdjnkjdnkjndkndkjndknkdjnkjdnkjdnk904",
-                coverImage = "",
-                songs = emptyList()
-            )
-        playlistViewModel.addPlaylist(playlist)
-        setUpRecyclerView()
-
-        UiUtils.showToast(this, "Playlist Saved")
-
-    }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {

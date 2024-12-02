@@ -1,11 +1,9 @@
 package com.downbadbuzor.trackpulse
 
-import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.media3.exoplayer.ExoPlayer
 import com.bumptech.glide.Glide
 import com.downbadbuzor.trackpulse.Utils.UiUtils
 import com.downbadbuzor.trackpulse.databinding.AudioItemModalBinding
@@ -27,12 +25,12 @@ class AudioItemModal(
         binding = AudioItemModalBinding.inflate(inflater, container, false)
 
 
-        binding.addToQueue.setOnClickListener{
+        binding.addToQueue.setOnClickListener {
             MyExoPlayer.addToQueue(item)
-            UiUtils.showToast(requireContext(),"Added to queue")
+            UiUtils.showToast(requireContext(), "Added to queue")
             dismiss()
         }
-        if(queueItem) {
+        if (queueItem) {
             binding.removeFromQueue.visibility = View.VISIBLE
             binding.removeFromQueue.setOnClickListener {
                 MyExoPlayer.removeFromQueue(item)
@@ -45,7 +43,7 @@ class AudioItemModal(
         return binding.root
     }
 
-    private fun setUi(){
+    private fun setUi() {
         binding.audioTitle.text = item.title
         binding.audioArtist.text = item.artist
 
