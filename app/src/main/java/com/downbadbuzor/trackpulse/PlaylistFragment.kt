@@ -170,12 +170,18 @@ class PlaylistFragment : Fragment() {
                 updateUI()
             }
         } else {
+              val songsInPlaylist = mutableListOf<AudioModel>()
             // Move observe() call to lifecycleScope and update UI inside the observer
             withContext(Dispatchers.Main) {
-                playlistViewModel.getPlaylistById(id?.toIntOrNull() ?: 0)
+                playlistViewModel.getPlaylistById(id.toIntOrNull() ?: 0)
                     .observe(viewLifecycleOwner) { playlist ->
-                        audioList = playlist.songs as ArrayList<AudioModel>
-                        audioList.sortBy { it.title }
+                         if(playlist.songs.isNotEmpty()){
+                             songsInPlaylist.clear()
+                             songsInPlaylist.addAll(getSongsByIds(playlist.songs, MyExoPlayer.getAllAudioList()!! as ArrayList<AudioModel>))
+                             songsInPlaylist.sortBy { it.title }
+                             audioList = songsInPlaylist as ArrayList<AudioModel>
+                         }
+
                         this@PlaylistFragment.playlist = playlist
                         playlistName = playlist.name
                         // Update UI after data is loaded
@@ -192,6 +198,12 @@ class PlaylistFragment : Fragment() {
             }
         }
     }
+    private fun getSongsByIds(songIds: List<String>, audioList: List<AudioModel>): List<AudioModel> {
+        return songIds.mapNotNull { id ->
+            audioList.find { it.id.toString() == id }
+        }
+    }
+
 
     private fun updateUI() {
         binding.playlistTitle.text = playlistName

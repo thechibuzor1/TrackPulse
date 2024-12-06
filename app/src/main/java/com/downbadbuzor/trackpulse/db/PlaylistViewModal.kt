@@ -8,6 +8,20 @@ import kotlinx.coroutines.launch
 class PlaylistViewModel(app: Application, private val playlistRepository: PlaylistRepo) :
     AndroidViewModel(app) {
 
+    fun addSongToPlaylist(playlistId: Int, song: String) = viewModelScope.launch {
+        val playlist = playlistRepository.getPlaylistByIdSync(playlistId)
+        if (playlist != null) {
+            val updatedSongs = playlist.songs.toMutableList()
+            if (!updatedSongs.contains(song)) {
+                updatedSongs.add(song)
+                val updatedPlaylist = playlist.copy(songs = updatedSongs)
+                playlistRepository.upsertPlaylist(updatedPlaylist)
+            }
+        }
+    }
+
+
+
 
     fun addPlaylist(playlist: Playlist) = viewModelScope.launch {
         playlistRepository.upsertPlaylist(playlist)

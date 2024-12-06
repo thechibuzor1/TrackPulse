@@ -13,4 +13,5 @@ class PlaylistRepo(
     fun getPlaylistById(id: Int) = db.getPlaylistDao().getPlaylistById(id)
 
 
+    suspend fun getPlaylistByIdSync(id: Int) = db.getPlaylistDao().getPlaylistByIdSync(id)
 }

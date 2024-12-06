@@ -11,7 +11,7 @@ import androidx.room.TypeConverters
     version = 1,
     exportSchema = false
 )
-@TypeConverters(AudioModelListConverter::class)
+@TypeConverters(StringListConverter::class)
 abstract class Playlistdb : RoomDatabase() {
 
     abstract fun getPlaylistDao(): PlaylistDao

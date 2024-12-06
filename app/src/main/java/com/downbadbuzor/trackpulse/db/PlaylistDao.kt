@@ -21,4 +21,8 @@ interface PlaylistDao {
     @Query("SELECT * FROM PLAYLISTS WHERE id = :id")
     fun getPlaylistById(id: Int): LiveData<Playlist>
 
+    @Query("SELECT * FROM PLAYLISTS WHERE id = :id")
+    suspend fun getPlaylistByIdSync(id: Int): Playlist?
+
+
 }

@@ -36,6 +36,7 @@ class PlayingBottomSheetFragment(
 
     private lateinit var binding: BottomSheetPlayingBinding
     private lateinit var exoPlayer: ExoPlayer
+    private lateinit var playlistOptionsModal: PlaylistOptionsModal
 
 
     override fun onCreateView(
@@ -213,6 +214,18 @@ class PlayingBottomSheetFragment(
                 }
                 delay(100) // Update every 100 milliseconds
             }
+        }
+
+        //add song to playlist
+        binding.add.setOnClickListener {
+            playlistOptionsModal = PlaylistOptionsModal(
+                operation = "ADD_TO_PLAYLIST",
+                songId = MyExoPlayer.getCurrentSong()?.extras?.getLong("id").toString()
+            )
+            playlistOptionsModal.show(
+                parentFragmentManager,
+                playlistOptionsModal.tag
+            )
         }
 
 

@@ -7,21 +7,38 @@ import com.downbadbuzor.trackpulse.model.AudioModel
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 
-class AudioModelListConverter {
+
+class StringListConverter {
 
     @TypeConverter
-    fun fromAudioModelList(songs: List<AudioModel>?): String? {
-        return Gson().toJson(songs) // Correct Gson usage
+    fun fromStringList(songs: List<String>?): String? {
+        return try {
+            Gson().toJson(songs)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
     @TypeConverter
-    fun toAudioModelList(songsString: String?): List<AudioModel>? {
-        return Gson().fromJson(
-            songsString,
-            object : TypeToken<List<AudioModel>>() {}.type
-        ) // Correct TypeToken usage
+    fun toStringList(songsString: String?): List<String>? {
+        return try {
+            if (songsString.isNullOrEmpty()) {
+                emptyList()
+            } else {
+                Gson().fromJson(
+                    songsString,
+                    object : TypeToken<List<String>>() {}.type
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
     }
 }
+
+
 
 @Entity(tableName = "playlists")
 data class Playlist(
@@ -29,5 +46,5 @@ data class Playlist(
     val id: Int? = null,
     val name: String,
     val coverImage: String,
-    val songs: List<AudioModel> = emptyList()
+    val songs: List<String> = emptyList()
 )
