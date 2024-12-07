@@ -27,6 +27,15 @@ object MyExoPlayer {
     private lateinit var applicationContext: Context // Add applicationContext
 
     private var isPlaying = false
+    private var currentPlaylistPlaying = "NONE"
+
+    fun setCurrentPlaylistPlaying(playlist: String) {
+        currentPlaylistPlaying = playlist
+    }
+
+    fun getCurrentPlaylistPlaying(): String {
+        return currentPlaylistPlaying
+    }
 
 
     private var isServiceRunning = false

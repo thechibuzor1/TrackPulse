@@ -10,15 +10,13 @@
         android:layout_width="40dp"
         android:layout_height="3dp"
         android:layout_gravity="center"
-        app:dividerColor="@color/gray"
-        />
+        app:dividerColor="@color/gray" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp"
-        >
+        android:padding="16dp">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/albumArtCardView"
@@ -65,9 +63,6 @@
         </LinearLayout>
 
 
-
-
-
     </RelativeLayout>
 
 
@@ -75,8 +70,7 @@
         android:layout_width="match_parent"
         android:layout_height="0.2dp"
         android:layout_gravity="center"
-        app:dividerColor="@color/gray"
-        />
+        app:dividerColor="@color/gray" />
 
     <LinearLayout
         android:id="@+id/add_to_queue"
@@ -90,6 +84,7 @@
             android:layout_height="24dp"
             android:layout_gravity="center"
             android:src="@drawable/add_to_queue" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -97,10 +92,34 @@
             android:textSize="15sp"
             android:fontFamily="sans-serif-black"
             android:layout_marginStart="8dp"
-            android:layout_gravity="center"
-            />
+            android:layout_gravity="center" />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/add_to_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@drawable/add" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add to Playlist"
+            android:textSize="15sp"
+            android:fontFamily="sans-serif-black"
+            android:layout_marginStart="8dp"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+
     <LinearLayout
         android:visibility="gone"
         android:id="@+id/remove_from_queue"
@@ -114,6 +133,7 @@
             android:layout_height="32dp"
             android:layout_gravity="center"
             android:src="@drawable/delete" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -121,8 +141,7 @@
             android:textSize="15sp"
             android:fontFamily="sans-serif-black"
             android:layout_marginStart="8dp"
-            android:layout_gravity="center"
-            />
+            android:layout_gravity="center" />
 
     </LinearLayout>
 

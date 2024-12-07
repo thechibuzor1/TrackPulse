@@ -81,6 +81,10 @@ class PlaylistFragment : Fragment() {
             sortModal.show(parentFragmentManager, sortModal.tag)
         }
 
+        if (MyExoPlayer.getCurrentPlaylistPlaying() == playlistName) {
+            binding.giantPlay.setImageResource(R.drawable.giant_pause)
+        }
+
         binding.giantPlay.setOnClickListener {
             binding.search.clearFocus()
             if (MyExoPlayer.getIsPlaying()) {
@@ -170,17 +174,22 @@ class PlaylistFragment : Fragment() {
                 updateUI()
             }
         } else {
-              val songsInPlaylist = mutableListOf<AudioModel>()
+            val songsInPlaylist = mutableListOf<AudioModel>()
             // Move observe() call to lifecycleScope and update UI inside the observer
             withContext(Dispatchers.Main) {
                 playlistViewModel.getPlaylistById(id.toIntOrNull() ?: 0)
                     .observe(viewLifecycleOwner) { playlist ->
-                         if(playlist.songs.isNotEmpty()){
-                             songsInPlaylist.clear()
-                             songsInPlaylist.addAll(getSongsByIds(playlist.songs, MyExoPlayer.getAllAudioList()!! as ArrayList<AudioModel>))
-                             songsInPlaylist.sortBy { it.title }
-                             audioList = songsInPlaylist as ArrayList<AudioModel>
-                         }
+                        if (playlist.songs.isNotEmpty()) {
+                            songsInPlaylist.clear()
+                            songsInPlaylist.addAll(
+                                getSongsByIds(
+                                    playlist.songs,
+                                    MyExoPlayer.getAllAudioList()!! as ArrayList<AudioModel>
+                                )
+                            )
+                            songsInPlaylist.sortBy { it.title }
+                            audioList = songsInPlaylist as ArrayList<AudioModel>
+                        }
 
                         this@PlaylistFragment.playlist = playlist
                         playlistName = playlist.name
@@ -198,7 +207,11 @@ class PlaylistFragment : Fragment() {
             }
         }
     }
-    private fun getSongsByIds(songIds: List<String>, audioList: List<AudioModel>): List<AudioModel> {
+
+    private fun getSongsByIds(
+        songIds: List<String>,
+        audioList: List<AudioModel>
+    ): List<AudioModel> {
         return songIds.mapNotNull { id ->
             audioList.find { it.id.toString() == id }
         }

@@ -16,6 +16,7 @@ class AudioItemModal(
 ) : BottomSheetDialogFragment() {
 
     private lateinit var binding: AudioItemModalBinding
+    private lateinit var playlistOptionsModal: PlaylistOptionsModal
 
 
     override fun onCreateView(
@@ -30,6 +31,19 @@ class AudioItemModal(
             UiUtils.showToast(requireContext(), "Added to queue")
             dismiss()
         }
+
+        binding.addToPlaylist.setOnClickListener {
+            playlistOptionsModal = PlaylistOptionsModal(
+                operation = "ADD_TO_PLAYLIST",
+                songId = item.id.toString()
+            )
+            playlistOptionsModal.show(
+                parentFragmentManager,
+                playlistOptionsModal.tag
+            )
+        }
+
+
         if (queueItem) {
             binding.removeFromQueue.visibility = View.VISIBLE
             binding.removeFromQueue.setOnClickListener {

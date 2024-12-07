@@ -60,7 +60,7 @@ class PlaylistOptionsModal(
                 binding.addToPlaylistLayout.visibility = View.VISIBLE
                 binding.optionsLayout.visibility = View.GONE
 
-                playlistAdapter = AddToPlaylist(playlistViewModel, songId)
+                playlistAdapter = AddToPlaylist(playlistViewModel, songId, requireContext())
                 binding.playlistRecyclerView.layoutManager =
                     StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
                 binding.playlistRecyclerView.adapter = playlistAdapter

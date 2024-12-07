@@ -1,17 +1,21 @@
 package com.downbadbuzor.trackpulse.adapters
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.downbadbuzor.trackpulse.Utils.UiUtils
 import com.downbadbuzor.trackpulse.databinding.PlaylistLayoutBinding
 import com.downbadbuzor.trackpulse.db.Playlist
 import com.downbadbuzor.trackpulse.db.PlaylistViewModel
 
 class AddToPlaylist(
     private val playlistViewModel: PlaylistViewModel,
-    private val songId: String?) :
+    private val songId: String?,
+    private val context: Context
+) :
     RecyclerView.Adapter<AddToPlaylist.AddToPlaylistViewHolder>() {
 
 
@@ -48,10 +52,11 @@ class AddToPlaylist(
     override fun onBindViewHolder(holder: AddToPlaylistViewHolder, position: Int) {
         val currentPlaylist = differ.currentList[position]
 
-        holder.binding.playlistNmae.text = currentPlaylist.name
+        holder.binding.playlistName.text = currentPlaylist.name
 
         holder.itemView.setOnClickListener {
             playlistViewModel.addSongToPlaylist(currentPlaylist.id!!, songId!!)
+            UiUtils.showToast(context, "Song added to ${currentPlaylist.name}")
         }
     }
 }

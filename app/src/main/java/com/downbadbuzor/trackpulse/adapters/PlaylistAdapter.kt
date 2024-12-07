@@ -47,7 +47,7 @@ class PlaylistAdapter(private val fragmentManager: FragmentManager) :
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         val currentPlaylist = differ.currentList[position]
 
-        holder.binding.playlistNmae.text = currentPlaylist.name
+        holder.binding.playlistName.text = currentPlaylist.name
 
         holder.itemView.setOnClickListener {
 
