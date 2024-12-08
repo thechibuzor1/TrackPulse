@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var playlistAdapter: PlaylistAdapter
 
+    private var currentLayoutGrid: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +93,27 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        mainBinding.switchLayout.setOnClickListener {
+            if (currentLayoutGrid) {
+                mainBinding.playlistRecyclerView.apply {
+                    //switch to list
+                    layoutManager =
+                        StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+                }
+                mainBinding.switchLayout.setImageResource(R.drawable.grid_view)
+                currentLayoutGrid = false
+
+            } else {
+                mainBinding.playlistRecyclerView.apply {
+                    //switch to grid
+                    layoutManager =
+                        StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                }
+                mainBinding.switchLayout.setImageResource(R.drawable.list_view)
+                currentLayoutGrid = true
+            }
+        }
+
 
     }
 
@@ -119,6 +141,8 @@ class MainActivity : AppCompatActivity() {
         if (playlist.isNullOrEmpty()) {
             mainBinding.playlistLayout.visibility = View.GONE
             mainBinding.noPlaylist.visibility = View.VISIBLE
+
+
         } else {
             mainBinding.playlistLayout.visibility = View.VISIBLE
             mainBinding.noPlaylist.visibility = View.GONE

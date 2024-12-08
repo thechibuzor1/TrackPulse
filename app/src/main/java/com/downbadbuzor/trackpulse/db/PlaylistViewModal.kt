@@ -20,8 +20,9 @@ class PlaylistViewModel(app: Application, private val playlistRepository: Playli
         }
     }
 
-
-
+    fun updatePlaylistCoverImage(playlistId: Int, imageUri: String?) = viewModelScope.launch {
+        playlistRepository.updatePlaylistCoverImage(playlistId, imageUri)
+    }
 
     fun addPlaylist(playlist: Playlist) = viewModelScope.launch {
         playlistRepository.upsertPlaylist(playlist)

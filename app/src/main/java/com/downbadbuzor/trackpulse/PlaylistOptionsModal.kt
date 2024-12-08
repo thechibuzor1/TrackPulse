@@ -62,7 +62,7 @@ class PlaylistOptionsModal(
 
                 playlistAdapter = AddToPlaylist(playlistViewModel, songId, requireContext())
                 binding.playlistRecyclerView.layoutManager =
-                    StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                    StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
                 binding.playlistRecyclerView.adapter = playlistAdapter
                 playlistViewModel.getAllPlaylists().observe(this) { playlist ->
                     playlistAdapter.differ.submitList(playlist)

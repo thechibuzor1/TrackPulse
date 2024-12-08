@@ -1,14 +1,23 @@
 package com.downbadbuzor.trackpulse
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.downbadbuzor.trackpulse.Utils.UiUtils
 import com.downbadbuzor.trackpulse.adapters.AudioAdapter
 import com.downbadbuzor.trackpulse.databinding.FragmentPlaylistBinding
 import com.downbadbuzor.trackpulse.db.Playlist
@@ -19,6 +28,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 private const val ARG_PARAM1 = "param1"
 
@@ -57,6 +69,8 @@ class PlaylistFragment : Fragment() {
 
         binding = FragmentPlaylistBinding.inflate(inflater, container, false)
 
+        audioList = ArrayList()
+
         playlistViewModel = (activity as MainActivity).playlistViewModel
 
         audioAdapter = AudioAdapter(requireActivity(), parentFragmentManager)
@@ -81,17 +95,31 @@ class PlaylistFragment : Fragment() {
             sortModal.show(parentFragmentManager, sortModal.tag)
         }
 
-        if (MyExoPlayer.getCurrentPlaylistPlaying() == playlistName) {
+
+        if (MyExoPlayer.getCurrentPlaylistPlaying() == id && MyExoPlayer.getIsPlaying()) {
             binding.giantPlay.setImageResource(R.drawable.giant_pause)
+        } else {
+            binding.giantPlay.setImageResource(R.drawable.giant_play)
         }
 
         binding.giantPlay.setOnClickListener {
             binding.search.clearFocus()
-            if (MyExoPlayer.getIsPlaying()) {
-                MyExoPlayer.pause()
 
+
+            if (MyExoPlayer.getCurrentPlaylistPlaying() == id) {
+
+                if (MyExoPlayer.getIsPlaying()) {
+                    binding.giantPlay.setImageResource(R.drawable.giant_play)
+                    MyExoPlayer.pause()
+
+                } else {
+                    MyExoPlayer.resume()
+                    binding.giantPlay.setImageResource(R.drawable.giant_pause)
+                }
             } else {
-                MyExoPlayer.resume()
+                MyExoPlayer.playFromHere(0)
+                id?.let { it1 -> MyExoPlayer.setCurrentPlaylistPlaying(it1) }
+                binding.giantPlay.setImageResource(R.drawable.giant_pause)
             }
         }
 
@@ -153,6 +181,12 @@ class PlaylistFragment : Fragment() {
             }
         }
 
+        binding.playlistCover.setOnClickListener {
+            binding.search.clearFocus()
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            pickImageLauncher.launch(intent)
+        }
+
 
         // Inflate the layout for this fragment
         return binding.root
@@ -193,6 +227,15 @@ class PlaylistFragment : Fragment() {
 
                         this@PlaylistFragment.playlist = playlist
                         playlistName = playlist.name
+
+
+                        Glide.with(binding.playlistImage.context)
+                            .load(playlist.coverImage)
+                            .placeholder(R.drawable.note)
+                            .error(R.drawable.note)
+                            .into(binding.playlistImage)
+
+
                         // Update UI after data is loaded
                         updateUI()
 
@@ -214,6 +257,61 @@ class PlaylistFragment : Fragment() {
     ): List<AudioModel> {
         return songIds.mapNotNull { id ->
             audioList.find { it.id.toString() == id }
+        }
+    }
+
+
+    private val pickImageLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val imageUri = result.data?.data
+                imageUri?.let {
+                    // Save the image URI and update the playlist cover
+                    lifecycleScope.launch {
+                        val savedImageUri = saveImageToAppStorage(
+                            requireContext(),
+                            it,
+                            "playlist_cover_${playlist.id}.jpg"
+                        )
+                        savedImageUri?.let { uri ->
+                            playlist.id?.let { it1 ->
+                                playlistViewModel.updatePlaylistCoverImage(
+                                    it1,
+                                    uri.toString()
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+    private fun saveImageToAppStorage(context: Context, sourceUri: Uri, fileName: String): Uri? {
+        val contentResolver = context.contentResolver
+        return try {
+            val inputStream = contentResolver.openInputStream(sourceUri)
+                ?: throw IOException("Unable to open input stream from URI: $sourceUri")
+            val appDir = context.filesDir
+            val file = File(appDir, fileName)
+
+            FileOutputStream(file).use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+
+            // Close the input stream
+            inputStream.close()
+
+            // Return the content URI for the saved file
+            FileProvider.getUriForFile(
+                context,
+                "com.downbadbuzor.trackpulse.fileprovider", // Ensure this matches your authority in the manifest
+                file
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            UiUtils.showToast(context, "Error saving image: ${e.message}")
+            null
         }
     }
 

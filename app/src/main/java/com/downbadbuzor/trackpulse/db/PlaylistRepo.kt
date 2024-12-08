@@ -14,4 +14,12 @@ class PlaylistRepo(
 
 
     suspend fun getPlaylistByIdSync(id: Int) = db.getPlaylistDao().getPlaylistByIdSync(id)
+
+    suspend fun updatePlaylistCoverImage(playlistId: Int, imageUri: String?) {
+        val playlist = getPlaylistByIdSync(playlistId)
+        if (playlist != null) {
+            val updatedPlaylist = playlist.copy(coverImage = imageUri!!)
+            upsertPlaylist(updatedPlaylist)
+        }
+    }
 }
