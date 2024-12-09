@@ -17,6 +17,7 @@ import com.downbadbuzor.trackpulse.model.AudioModel
 class AudioAdapter(
     private val activity: Activity,
     private val supportFragmentManager: FragmentManager,
+    val playlistId: String? = null
 ) :
     RecyclerView.Adapter<AudioAdapter.AudioViewHolder>() {
     private val songs = mutableListOf<AudioModel>()
@@ -77,7 +78,8 @@ class AudioAdapter(
 
 
             binding.options.setOnClickListener {
-                val bottomSheetFragment = AudioItemModal(audio, false)
+                val bottomSheetFragment =
+                    AudioItemModal(audio, false, if (playlistId == "ALL") null else playlistId)
                 bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
 
             }
@@ -96,11 +98,16 @@ class AudioAdapter(
         holder.itemView.setOnClickListener {
             val search = activity.findViewById<SearchView>(R.id.search)
             MyExoPlayer.playFromHere(position)
+            if (playlistId != null) MyExoPlayer.setCurrentPlaylistPlaying(playlistId)
             search.clearFocus()
         }
         holder.itemView.setOnLongClickListener {
 
-            val bottomSheetFragment = AudioItemModal(songs[position], false)
+            val bottomSheetFragment = AudioItemModal(
+                songs[position],
+                false,
+                if (playlistId == "ALL") null else playlistId
+            )
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
 
             true

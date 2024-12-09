@@ -7,16 +7,19 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.downbadbuzor.trackpulse.Utils.UiUtils
 import com.downbadbuzor.trackpulse.databinding.AudioItemModalBinding
+import com.downbadbuzor.trackpulse.db.PlaylistViewModel
 import com.downbadbuzor.trackpulse.model.AudioModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class AudioItemModal(
     private val item: AudioModel,
-    private val queueItem: Boolean
+    private val queueItem: Boolean,
+    private val playlistId: String? = null
 ) : BottomSheetDialogFragment() {
 
     private lateinit var binding: AudioItemModalBinding
     private lateinit var playlistOptionsModal: PlaylistOptionsModal
+    private lateinit var playlistViewModel: PlaylistViewModel
 
 
     override fun onCreateView(
@@ -25,7 +28,7 @@ class AudioItemModal(
     ): View? {
         binding = AudioItemModalBinding.inflate(inflater, container, false)
 
-
+        playlistViewModel = (activity as MainActivity).playlistViewModel
         binding.addToQueue.setOnClickListener {
             MyExoPlayer.addToQueue(item)
             UiUtils.showToast(requireContext(), "Added to queue")
@@ -41,6 +44,17 @@ class AudioItemModal(
                 parentFragmentManager,
                 playlistOptionsModal.tag
             )
+        }
+        if (playlistId != null) {
+            binding.removeFromPlaylist.visibility = View.VISIBLE
+            binding.removeFromPlaylist.setOnClickListener {
+
+                playlistViewModel.removeSongFromPlaylist(playlistId.toInt(), item.id.toString())
+                UiUtils.showToast(requireContext(), "${item.title} removed from playlist")
+
+                dismiss()
+            }
+
         }
 
 

@@ -20,6 +20,20 @@ class PlaylistViewModel(app: Application, private val playlistRepository: Playli
         }
     }
 
+    fun removeSongFromPlaylist(playlistId: Int, song: String) = viewModelScope.launch {
+        val playlist = playlistRepository.getPlaylistByIdSync(playlistId)
+
+        if (playlist != null) {
+            val updatedSongs = playlist.songs.toMutableList()
+
+            if (updatedSongs.contains(song)) {
+                updatedSongs.remove(song)
+                val updatedPlaylist = playlist.copy(songs = updatedSongs)
+                playlistRepository.upsertPlaylist(updatedPlaylist)
+            }
+        }
+    }
+
     fun updatePlaylistCoverImage(playlistId: Int, imageUri: String?) = viewModelScope.launch {
         playlistRepository.updatePlaylistCoverImage(playlistId, imageUri)
     }

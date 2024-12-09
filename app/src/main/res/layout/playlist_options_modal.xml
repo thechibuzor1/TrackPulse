@@ -13,6 +13,7 @@
         app:dividerColor="@color/gray" />
 
 
+    <!-- playlist options layout -->
     <LinearLayout
         android:visibility="gone"
         android:id="@+id/options_layout"
@@ -94,6 +95,8 @@
         </LinearLayout>
     </LinearLayout>
 
+
+    <!-- Create a Playlist layout -->
     <LinearLayout
         android:visibility="gone"
         android:id="@+id/create_playlist_layout"
@@ -136,8 +139,10 @@
 
     </LinearLayout>
 
+
+    <!-- Add song to playlist layout -->
     <RelativeLayout
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/add_to_playlist_layout"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -179,5 +184,127 @@
 
 
     </RelativeLayout>
+
+    <!-- Edit a playlist layout -->
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/edit_playlist_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit playlist"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="24sp"
+            android:layout_marginVertical="16dp"
+            android:layout_gravity="center" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="0.2dp"
+            android:layout_gravity="center"
+            app:dividerColor="@color/gray" />
+
+        <LinearLayout
+            android:id="@+id/edit_playlist_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/edit_pen" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Change playlist name"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif-black"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/change_playlist_cover_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/edit_pen" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Change playlist cover image"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif-black"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <!-- Create a Playlist name -->
+    <LinearLayout
+        android:visibility="visible"
+        android:id="@+id/change_playlist_name_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change the playlist name"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="24sp"
+            android:layout_marginVertical="16dp"
+            android:layout_gravity="center" />
+
+
+        <EditText
+            android:id="@+id/change_playlist_name"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:hint="Playlist Name"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="22sp" />
+
+        <Button
+            android:backgroundTint="?attr/colorPrimaryContainer"
+            android:id="@+id/change_playlist_name_btn"
+            android:layout_marginVertical="32dp"
+            android:layout_gravity="center"
+            android:text="Save changes"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="16sp" />
+
+
+    </LinearLayout>
 
 </LinearLayout>

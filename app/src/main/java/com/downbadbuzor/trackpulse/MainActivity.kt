@@ -167,9 +167,6 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        //playlistAdapter.differ.submitList(demoPlaylist)
-
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -216,6 +213,16 @@ class MainActivity : AppCompatActivity() {
                 mainBinding.loadingIndicator.visibility = View.GONE // Hide loading indicator
                 mainBinding.fragmentContainer.visibility =
                     View.VISIBLE // Show the scrollable content
+                mainBinding.playingBottomSheetCoverHome.visibility = View.VISIBLE
+
+                mainBinding.playPauseHome.setOnClickListener {
+                    if (MyExoPlayer.getIsPlaying()) {
+                        MyExoPlayer.pause()
+                    } else {
+                        MyExoPlayer.resume()
+                    }
+                }
+
 
                 MyExoPlayer.getCurrentSong()?.let { currentSong ->
 

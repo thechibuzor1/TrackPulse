@@ -3,7 +3,6 @@ package com.downbadbuzor.trackpulse.db
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
-import com.downbadbuzor.trackpulse.model.AudioModel
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 
@@ -37,7 +36,6 @@ class StringListConverter {
         }
     }
 }
-
 
 
 @Entity(tableName = "playlists")

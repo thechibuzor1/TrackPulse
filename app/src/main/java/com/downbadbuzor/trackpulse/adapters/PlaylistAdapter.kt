@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.downbadbuzor.trackpulse.PlaylistFragment
+import com.downbadbuzor.trackpulse.PlaylistOptionsModal
 import com.downbadbuzor.trackpulse.R
 import com.downbadbuzor.trackpulse.databinding.PlaylistLayoutBinding
 import com.downbadbuzor.trackpulse.db.Playlist
@@ -103,6 +104,12 @@ class PlaylistAdapter(private val fragmentManager: FragmentManager) :
                 )
                 .addToBackStack("myFragmentTag") // Optional tag
                 .commit()
+        }
+
+        holder.itemView.setOnLongClickListener {
+            val bottomSheetFragment = PlaylistOptionsModal(currentPlaylist, "OPTIONS")
+            bottomSheetFragment.show(fragmentManager, bottomSheetFragment.tag)
+            true
         }
     }
 }

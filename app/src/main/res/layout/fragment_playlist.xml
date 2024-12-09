@@ -25,6 +25,7 @@
                 android:layout_height="?attr/actionBarSize">
 
                 <ImageView
+                    android:visibility="gone"
                     android:layout_marginEnd="8dp"
                     android:id="@+id/options_icon"
                     android:layout_width="48dp"
@@ -35,7 +36,7 @@
 
             <androidx.core.widget.NestedScrollView
 
-                android:visibility="visible"
+                android:visibility="gone"
                 android:layout_below="@+id/my_toolbar"
                 android:id="@+id/scrollView"
                 android:fillViewport="true"

@@ -1,13 +1,19 @@
 package com.downbadbuzor.trackpulse.adapters
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.downbadbuzor.trackpulse.Utils.UiUtils
-import com.downbadbuzor.trackpulse.databinding.PlaylistLayoutBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.downbadbuzor.trackpulse.R
+import com.downbadbuzor.trackpulse.databinding.SaveSongToPlaylistBinding
 import com.downbadbuzor.trackpulse.db.Playlist
 import com.downbadbuzor.trackpulse.db.PlaylistViewModel
 
@@ -19,7 +25,7 @@ class AddToPlaylist(
     RecyclerView.Adapter<AddToPlaylist.AddToPlaylistViewHolder>() {
 
 
-    class AddToPlaylistViewHolder(val binding: PlaylistLayoutBinding) :
+    class AddToPlaylistViewHolder(val binding: SaveSongToPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root)
 
 
@@ -39,7 +45,7 @@ class AddToPlaylist(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddToPlaylistViewHolder {
         return AddToPlaylistViewHolder(
-            PlaylistLayoutBinding.inflate(
+            SaveSongToPlaylistBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
         )
@@ -54,9 +60,68 @@ class AddToPlaylist(
 
         holder.binding.playlistName.text = currentPlaylist.name
 
+        if (currentPlaylist.songs.contains(songId)) {
+            holder.binding.playlistCheckbox.isChecked = true
+        }
+
+        Glide.with(holder.binding.playlistImage.context)
+            .load(currentPlaylist.coverImage)
+            .placeholder(R.drawable.note)
+            .error(R.drawable.note)
+            .into(holder.binding.playlistImage)
+
+        //background color match cover image
+        Glide.with(holder.binding.playlistCard.context)
+            .asBitmap()
+            .error(R.color.default_color)
+            .load(currentPlaylist.coverImage)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
+                ) {
+                    Palette.from(resource).generate { palette ->
+                        val dominantColor = palette?.getDarkMutedColor(
+                            ContextCompat.getColor(
+                                holder.binding.playlistCard.context,
+                                R.color.default_color
+                            )
+                        )
+                        holder.binding.playlistCard.setBackgroundColor(
+                            dominantColor ?: ContextCompat.getColor(
+                                holder.binding.playlistCard.context,
+                                R.color.default_color
+                            )
+                        )
+                    }
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    // Optional: Handle placeholder or clearing the image
+                }
+            })
+
+
+
+
         holder.itemView.setOnClickListener {
-            playlistViewModel.addSongToPlaylist(currentPlaylist.id!!, songId!!)
-            UiUtils.showToast(context, "Song added to ${currentPlaylist.name}")
+            val isSongInCurrentPlaylist =
+                currentPlaylist.songs.contains(songId) // Check for current playlist
+            if (isSongInCurrentPlaylist) {
+                playlistViewModel.removeSongFromPlaylist(currentPlaylist.id!!, songId!!)
+            } else {
+                playlistViewModel.addSongToPlaylist(currentPlaylist.id!!, songId!!)
+            }
+        }
+
+        holder.binding.playlistCheckbox.setOnClickListener {
+            val isSongInCurrentPlaylist =
+                currentPlaylist.songs.contains(songId) // Check for current playlist
+            if (isSongInCurrentPlaylist) {
+                playlistViewModel.removeSongFromPlaylist(currentPlaylist.id!!, songId!!)
+            } else {
+                playlistViewModel.addSongToPlaylist(currentPlaylist.id!!, songId!!)
+            }
         }
     }
 }
