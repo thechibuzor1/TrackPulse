@@ -25,6 +25,7 @@ import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.downbadbuzor.trackpulse.databinding.BottomSheetPlayingBinding
+import com.downbadbuzor.trackpulse.db.PlaylistViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -37,6 +38,9 @@ class PlayingBottomSheetFragment(
     private lateinit var binding: BottomSheetPlayingBinding
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var playlistOptionsModal: PlaylistOptionsModal
+    private lateinit var playlistViewModel: PlaylistViewModel
+
+    private val likedSongs = mutableListOf<String>()
 
 
     override fun onCreateView(
@@ -45,6 +49,7 @@ class PlayingBottomSheetFragment(
     ): View? {
         binding = BottomSheetPlayingBinding.inflate(inflater, container, false)
 
+        playlistViewModel = (activity as MainActivity).playlistViewModel
 
 
         exoPlayer = MyExoPlayer.getInstance()!!
@@ -56,7 +61,8 @@ class PlayingBottomSheetFragment(
             setUi(
                 currentSong.title.toString(),
                 currentSong.artist.toString(),
-                currentSong.artworkUri!!.toString()
+                currentSong.artworkUri!!.toString(),
+                currentSong.extras?.getLong("id").toString()
             )
 
         }
@@ -150,7 +156,8 @@ class PlayingBottomSheetFragment(
                         setUi(
                             currentSong.title.toString(),
                             currentSong.artist.toString(),
-                            currentSong.artworkUri?.toString() ?: ""
+                            currentSong.artworkUri?.toString() ?: "",
+                            currentSong.extras?.getLong("id").toString()
                         )
                     }
                     MyExoPlayer.getNextSong()?.let { nextSong -> // Use let for nextSong as well
@@ -179,7 +186,6 @@ class PlayingBottomSheetFragment(
 
             }
         )
-
 
         // SeekBar setup
         binding.seekBar.max = 1000 // Set maximum value for smoother seeking
@@ -299,10 +305,44 @@ class PlayingBottomSheetFragment(
         })
 
 
+        //favorites action
+        binding.fav.setOnClickListener {
+            likeUnLike()
+        }
+
+
         return binding.root
     }
 
-    private fun setUi(title: String, artist: String, albumArtUri: String) {
+    //update liked
+    private fun updateLiked(currentSongId: String) {
+        playlistViewModel.getPlaylistById(0)
+            .observe(this) { playlist ->
+                if (playlist.songs.isNotEmpty()) {
+                    likedSongs.clear()
+                    likedSongs.addAll(playlist.songs)
+
+                    if (likedSongs.contains(currentSongId)) {
+                        binding.fav.setImageResource(R.drawable.fav_filled)
+                    } else {
+                        binding.fav.setImageResource(R.drawable.fav)
+                    }
+                }
+            }
+    }
+
+    private fun likeUnLike() {
+        val currentSongId = MyExoPlayer.getCurrentSong()?.extras?.getLong("id").toString()
+
+        if (likedSongs.contains(currentSongId)) {
+            playlistViewModel.removeSongFromPlaylist(0, currentSongId)
+        } else {
+            playlistViewModel.addSongToPlaylist(0, currentSongId)
+        }
+    }
+
+
+    private fun setUi(title: String, artist: String, albumArtUri: String, currentSongId: String) {
         binding.playingSongTitle.text = title
         binding.playingSongArtist.text = artist
 
@@ -381,6 +421,7 @@ class PlayingBottomSheetFragment(
                 }
             })
 
+        updateLiked(currentSongId)
 
     }
 

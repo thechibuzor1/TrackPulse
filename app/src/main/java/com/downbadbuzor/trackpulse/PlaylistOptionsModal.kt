@@ -176,6 +176,8 @@ class PlaylistOptionsModal(
                                     songs = playlist.songs
                                 )
                             playlistViewModel.addPlaylist(playlist)
+                            UiUtils.showToast(requireContext(), "Playlist cover changed")
+                            dismiss()
                         }
                     }
                 }
@@ -244,7 +246,7 @@ class PlaylistOptionsModal(
                 songs = playlist.songs
             )
         playlistViewModel.addPlaylist(playlist)
-
+        UiUtils.showToast(requireContext(), "Playlist name changed")
         dismiss()
     }
 

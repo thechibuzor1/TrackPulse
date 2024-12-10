@@ -134,7 +134,10 @@
             android:layout_height="wrap_content"
             android:text="Create"
             android:fontFamily="sans-serif-medium"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:backgroundTint="?attr/colorPrimaryContainer"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="16dp" />
 
 
     </LinearLayout>
@@ -245,7 +248,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
-                android:src="@drawable/edit_pen" />
+                android:src="@drawable/photo" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -263,7 +266,7 @@
 
     <!-- Create a Playlist name -->
     <LinearLayout
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/change_playlist_name_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

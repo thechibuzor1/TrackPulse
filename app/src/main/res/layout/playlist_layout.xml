@@ -8,7 +8,6 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="8dp"
         android:layout_margin="2dp"
         app:cardCornerRadius="8dp">
 
@@ -17,35 +16,32 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:background="@drawable/rounded"
-            android:gravity="center"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="8dp">
+            android:padding="4dp">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/playlist_cover"
-                android:backgroundTint="?attr/colorPrimaryContainer"
-                android:layout_width="32dp"
+                android:backgroundTint="?attr/colorSecondary"
+                android:layout_width="40dp"
                 android:layout_marginEnd="6dp"
-                android:layout_gravity="center"
-                android:layout_height="32dp"
+                android:layout_height="40dp"
                 app:strokeColor="@android:color/transparent"
                 app:cardCornerRadius="8dp">
 
                 <ImageView
-                    android:scaleType="centerCrop"
                     android:id="@+id/playlist_image"
-                    android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/note" />
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/playlistName"
                 android:layout_weight="200"
+                android:layout_gravity="center"
                 android:fontFamily="sans-serif-medium"
                 android:text="Playlist Name"
                 android:textStyle="bold"

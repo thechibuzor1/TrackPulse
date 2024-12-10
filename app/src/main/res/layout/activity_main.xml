@@ -63,59 +63,106 @@
 
 
                     <LinearLayout
-                        android:layout_marginBottom="16dp"
-                        android:gravity="center_vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="32dp"
                         android:orientation="horizontal">
 
                         <LinearLayout
-                            android:id="@+id/go_to_all"
+
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_margin="16dp">
+                            android:orientation="vertical">
 
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/playlist_cover"
-                                android:backgroundTint="?attr/colorPrimaryContainer"
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
-                                app:strokeColor="@android:color/transparent"
-                                android:layout_marginBottom="2dp"
-                                app:cardCornerRadius="8dp">
+                            <LinearLayout
+                                android:background="@drawable/rounded"
+                                android:id="@+id/go_to_all"
+                                android:layout_width="150dp"
+                                android:layout_height="40dp"
+                                android:orientation="horizontal"
+                                android:layout_marginBottom="4dp"
+                                android:layout_marginStart="16dp">
 
-                                <ImageView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
+                                <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/playlist_cover"
+                                    android:backgroundTint="?attr/colorPrimary"
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp"
+                                    app:strokeColor="@android:color/transparent"
+
+                                    app:cardCornerRadius="8dp">
+
+                                    <ImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:scaleType="centerCrop"
+                                        android:src="@drawable/note" />
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="All Songs"
+                                    android:layout_marginStart="8dp"
+                                    android:textSize="16sp"
                                     android:layout_gravity="center"
-                                    android:scaleType="centerCrop"
-                                    android:src="@drawable/note" />
-                            </com.google.android.material.card.MaterialCardView>
+                                    android:fontFamily="sans-serif-medium"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="All Songs"
-                                android:fontFamily="sans-serif-medium"
-                                android:textStyle="bold" />
+
+                            <LinearLayout
+                                android:backgroundTint="?attr/colorSecondaryContainer"
+                                android:background="@drawable/rounded"
+                                android:id="@+id/create_playlist"
+                                android:layout_width="150dp"
+                                android:layout_height="40dp"
+                                android:orientation="horizontal"
+                                android:layout_marginStart="16dp">
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/add_playlist_cover"
+                                    android:backgroundTint="?attr/colorPrimary"
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp"
+                                    app:strokeColor="@android:color/transparent"
+                                    app:cardCornerRadius="8dp">
+
+                                    <ImageView
+                                        android:layout_width="25dp"
+                                        android:layout_height="25dp"
+                                        android:layout_gravity="center"
+                                        android:scaleType="centerCrop"
+                                        android:src="@drawable/add" />
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Add Playlist"
+                                    android:textSize="16sp"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_gravity="center"
+                                    android:fontFamily="sans-serif-medium"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
                         </LinearLayout>
 
-
                         <LinearLayout
-                            android:id="@+id/create_playlist"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:id="@+id/go_to_favourites"
+                            android:layout_width="150dp"
+                            android:layout_height="84dp"
                             android:orientation="vertical"
-                            android:layout_marginVertical="16dp">
+                            android:layout_marginStart="4dp">
 
                             <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/add_playlist_cover"
-                                android:backgroundTint="?attr/colorSecondaryContainer"
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
+                                android:id="@+id/favourites"
+                                android:backgroundTint="?attr/colorTertiaryContainer"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
                                 app:strokeColor="@android:color/transparent"
-                                android:layout_marginBottom="2dp"
                                 app:cardCornerRadius="8dp">
 
                                 <ImageView
@@ -123,19 +170,12 @@
                                     android:layout_height="50dp"
                                     android:layout_gravity="center"
                                     android:scaleType="centerCrop"
-                                    android:src="@drawable/add" />
+                                    android:src="@drawable/fav_home" />
                             </com.google.android.material.card.MaterialCardView>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Add Playlist"
-                                android:fontFamily="sans-serif-medium"
-                                android:textStyle="bold" />
                         </LinearLayout>
 
-                    </LinearLayout>
 
+                    </LinearLayout>
 
                     <LinearLayout
                         android:visibility="gone"

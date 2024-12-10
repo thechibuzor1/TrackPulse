@@ -81,16 +81,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         mainBinding.goToAll.setOnClickListener {
-
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, PlaylistFragment.newInstance("ALL"))
                 .addToBackStack("myFragmentTag") // Optional tag
                 .commit()
         }
+        mainBinding.goToFavourites.setOnClickListener {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, PlaylistFragment.newInstance("0"))
+                .addToBackStack("myFragmentTag") // Optional tag
+                .commit()
+        }
+
         mainBinding.createPlaylist.setOnClickListener {
             playlistOptionsModal = PlaylistOptionsModal(operation = "CREATE")
             playlistOptionsModal.show(supportFragmentManager, playlistOptionsModal.tag)
-
         }
 
         mainBinding.switchLayout.setOnClickListener {
@@ -162,12 +167,28 @@ class MainActivity : AppCompatActivity() {
         }
 
         playlistViewModel.getAllPlaylists().observe(this) { playlist ->
-            playlistAdapter.differ.submitList(playlist)
-            updatePlaylistUi(playlist)
+
+            if (playlist.isNullOrEmpty()) {
+                initLiked()
+            }
+
+            val filteredPlaylists = playlist.filter { it.id != 0 }
+            playlistAdapter.differ.submitList(filteredPlaylists)
+            updatePlaylistUi(filteredPlaylists)
         }
-
-
     }
+
+    private fun initLiked() {
+        val liked =
+            Playlist(
+                id = 0,
+                name = "Liked",
+                coverImage = "",
+                songs = emptyList()
+            )
+        playlistViewModel.addPlaylist(liked)
+    }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {

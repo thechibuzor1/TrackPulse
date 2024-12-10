@@ -56,7 +56,6 @@ class PlaylistAdapter(private val fragmentManager: FragmentManager) :
 
         holder.binding.playlistName.text = currentPlaylist.name
 
-
         Glide.with(holder.binding.playlistImage.context)
             .load(currentPlaylist.coverImage)
             .placeholder(R.drawable.note)

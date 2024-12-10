@@ -195,12 +195,16 @@ class PlaylistFragment : Fragment() {
                 updateUI()
             }
         } else {
-            binding.optionsIcon.visibility = View.VISIBLE
             val songsInPlaylist = mutableListOf<AudioModel>()
             // Move observe() call to lifecycleScope and update UI inside the observer
             withContext(Dispatchers.Main) {
                 playlistViewModel.getPlaylistById(id.toIntOrNull() ?: 0)
                     .observe(viewLifecycleOwner) { playlist ->
+                        if (playlist.id == 0) {
+                            binding.optionsIcon.visibility = View.GONE
+                        } else {
+                            binding.optionsIcon.visibility = View.VISIBLE
+                        }
                         if (playlist.songs.isNotEmpty()) {
                             songsInPlaylist.clear()
                             songsInPlaylist.addAll(
@@ -251,7 +255,7 @@ class PlaylistFragment : Fragment() {
 
     private fun updateUI() {
         binding.playlistTitle.text = playlistName
-        if (audioList.size < 1) {
+        if (audioList.isEmpty()) {
             binding.num.text = "${audioList.size} track"
             binding.topBtns.visibility = View.GONE
             binding.topActionBtns.visibility = View.GONE
