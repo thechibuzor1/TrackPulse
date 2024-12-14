@@ -174,6 +174,14 @@ class PlaylistFragment : Fragment() {
             }
         }
 
+        binding.emptyPlaylist.setOnClickListener {
+            playlistOptionsModal = PlaylistOptionsModal(playlist, "SHOW_ALL_SONGS")
+            playlistOptionsModal.show(
+                parentFragmentManager,
+                playlistOptionsModal.tag
+            )
+        }
+
 
         // Inflate the layout for this fragment
         return binding.root
@@ -185,9 +193,16 @@ class PlaylistFragment : Fragment() {
     private suspend fun loadPlaylist(id: String) {
         if (id === "ALL") {
             binding.optionsIcon.visibility = View.GONE
+            binding.playlistImage.setImageResource(R.drawable.note)
             withContext(Dispatchers.IO) {
                 audioList = MyExoPlayer.getAllAudioList()!! as ArrayList<AudioModel>
-                audioList.sortBy { it.title }
+                audioList.sortBy {
+                    if (MyExoPlayer.getCurrentSorting() == "DEFAULT") {
+                        it.title
+                    } else {
+                        it.artist
+                    }
+                }
             }
             // Update UI for "ALL" case on the main thread
             withContext(Dispatchers.Main) {
@@ -213,18 +228,41 @@ class PlaylistFragment : Fragment() {
                                     MyExoPlayer.getAllAudioList()!! as ArrayList<AudioModel>
                                 )
                             )
-                            songsInPlaylist.sortBy { it.title }
+                            songsInPlaylist.sortBy {
+                                if (MyExoPlayer.getCurrentSorting() == "DEFAULT") {
+                                    it.title
+                                } else {
+                                    it.artist
+                                }
+                            }
                             audioList = songsInPlaylist as ArrayList<AudioModel>
+                        } else {
+                            audioList.clear()
+                            updateUI()
                         }
 
                         this@PlaylistFragment.playlist = playlist
                         playlistName = playlist.name
 
 
+                        val placeholderResId =
+                            when (id) {
+                                "ALL" -> {
+                                    R.drawable.note
+                                }
+
+                                "0" -> {
+                                    R.drawable.heart
+                                }
+
+                                else -> {
+                                    R.drawable.playlist
+                                }
+                            }
                         Glide.with(binding.playlistImage.context)
                             .load(playlist.coverImage)
-                            .placeholder(R.drawable.note)
-                            .error(R.drawable.note)
+                            .placeholder(placeholderResId)
+                            .error(placeholderResId)
                             .into(binding.playlistImage)
 
 
@@ -259,10 +297,14 @@ class PlaylistFragment : Fragment() {
             binding.num.text = "${audioList.size} track"
             binding.topBtns.visibility = View.GONE
             binding.topActionBtns.visibility = View.GONE
+            binding.emptyPlaylist.visibility = View.VISIBLE
+            binding.recyclerView.visibility = View.GONE
         } else {
             binding.num.text = "${audioList.size} tracks"
             binding.topBtns.visibility = View.VISIBLE
             binding.topActionBtns.visibility = View.VISIBLE
+            binding.emptyPlaylist.visibility = View.GONE
+            binding.recyclerView.visibility = View.VISIBLE
         }
         audioAdapter.updateExoplayerList(audioList)
         binding.recyclerView.adapter = audioAdapter

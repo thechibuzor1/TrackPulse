@@ -58,8 +58,8 @@ class PlaylistAdapter(private val fragmentManager: FragmentManager) :
 
         Glide.with(holder.binding.playlistImage.context)
             .load(currentPlaylist.coverImage)
-            .placeholder(R.drawable.note)
-            .error(R.drawable.note)
+            .placeholder(R.drawable.playlist)
+            .error(R.drawable.playlist)
             .into(holder.binding.playlistImage)
 
         //background color match cover image

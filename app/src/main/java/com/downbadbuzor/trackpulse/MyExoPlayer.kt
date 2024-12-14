@@ -168,10 +168,11 @@ object MyExoPlayer {
                     super.onMediaItemTransition(mediaItem, reason)
 
 
-                    if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
+                    if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO && queue!!.isNotEmpty()) {
                         playNextSong()
 
                     }
+
                     if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT) {
                         if (exoPlayer?.repeatMode == Player.REPEAT_MODE_ALL) {
                             when (originalSequence) {

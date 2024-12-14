@@ -46,6 +46,30 @@
             app:dividerColor="@color/gray" />
 
         <LinearLayout
+            android:id="@+id/add_songs_to_playlist_option"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/add" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Songs"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif-black"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/edit_playlist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -145,6 +169,7 @@
 
     <!-- Add song to playlist layout -->
     <RelativeLayout
+        android:paddingBottom="8dp"
         android:visibility="gone"
         android:id="@+id/add_to_playlist_layout"
         android:orientation="vertical"
@@ -166,14 +191,14 @@
         <androidx.recyclerview.widget.RecyclerView
             android:paddingHorizontal="16dp"
             android:layout_below="@+id/header_text_save_to_playlist"
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/save_button"
             android:id="@+id/playlist_recycler_view" />
 
         <Button
             android:backgroundTint="?attr/colorPrimaryContainer"
-            android:layout_below="@+id/playlist_recycler_view"
+            android:layout_alignParentBottom="true"
             android:id="@+id/save_button"
             android:paddingHorizontal="24dp"
             android:paddingVertical="16dp"
@@ -182,8 +207,7 @@
             android:fontFamily="sans-serif-medium"
             android:text="Save Changes"
             android:textSize="16sp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginVertical="16dp" />
+            android:layout_centerHorizontal="true" />
 
 
     </RelativeLayout>
@@ -309,5 +333,50 @@
 
 
     </LinearLayout>
+
+    <!--Show all songs layout -->
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/show_all_songs_layout"
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_centerHorizontal="true"
+            android:id="@+id/header_text_show_all_songs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add songs to playlist"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="24sp"
+            android:layout_marginVertical="16dp"
+            android:layout_gravity="center" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:paddingHorizontal="16dp"
+            android:layout_below="@+id/header_text_show_all_songs"
+            android:layout_above="@+id/save_button_show_all_songs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/show_all_songs_recycler_view" />
+
+        <Button
+            android:backgroundTint="?attr/colorPrimaryContainer"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/save_button_show_all_songs"
+            android:paddingHorizontal="32dp"
+            android:paddingVertical="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="Done"
+            android:textSize="16sp"
+            android:layout_centerHorizontal="true" />
+
+
+    </RelativeLayout>
 
 </LinearLayout>

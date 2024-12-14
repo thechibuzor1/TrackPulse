@@ -182,7 +182,7 @@ class MainActivity : AppCompatActivity() {
         val liked =
             Playlist(
                 id = 0,
-                name = "Liked",
+                name = "Liked Songs",
                 coverImage = "",
                 songs = emptyList()
             )
@@ -234,7 +234,6 @@ class MainActivity : AppCompatActivity() {
                 mainBinding.loadingIndicator.visibility = View.GONE // Hide loading indicator
                 mainBinding.fragmentContainer.visibility =
                     View.VISIBLE // Show the scrollable content
-                mainBinding.playingBottomSheetCoverHome.visibility = View.VISIBLE
 
                 mainBinding.playPauseHome.setOnClickListener {
                     if (MyExoPlayer.getIsPlaying()) {
@@ -262,6 +261,9 @@ class MainActivity : AppCompatActivity() {
                 exoPlayer?.addListener(
                     object : Player.Listener {
                         override fun onIsPlayingChanged(isPlaying: Boolean) {
+                            if (MyExoPlayer.getCurrentPlaylistPlaying() !== "NONE") {
+                                mainBinding.playingBottomSheetCoverHome.visibility = View.VISIBLE
+                            }
                         }
 
                         override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
@@ -276,7 +278,6 @@ class MainActivity : AppCompatActivity() {
                             }
 
                         }
-
 
                     }
                 )

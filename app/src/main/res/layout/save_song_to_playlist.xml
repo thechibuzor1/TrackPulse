@@ -24,7 +24,6 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/playlist_cover"
-                android:backgroundTint="?attr/colorPrimaryContainer"
                 android:layout_width="32dp"
                 android:layout_marginEnd="6dp"
                 android:layout_gravity="center"
@@ -38,7 +37,7 @@
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/note" />
+                    android:src="@drawable/playlist" />
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
@@ -51,7 +50,8 @@
                 android:textStyle="bold"
                 android:textSize="18sp" />
 
-            <CheckBox
+            <ImageView
+                android:src="@drawable/unchecked"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:id="@+id/playlist_checkbox" />

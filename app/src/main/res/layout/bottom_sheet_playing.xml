@@ -32,6 +32,7 @@
             android:fontFamily="sans-serif-medium"
             android:layout_marginTop="16dp"
             android:textColor="@color/white"
+            android:textStyle="bold"
             android:gravity="center_horizontal"
             android:layout_marginBottom="16dp" />
 
@@ -43,7 +44,6 @@
             android:scrollbarSize="0dp">
 
             <LinearLayout
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -57,7 +57,7 @@
                     app:cardElevation="16dp"
                     android:layout_marginTop="64dp"
                     app:strokeColor="@android:color/transparent"
-                    android:background="@color/black"
+
                     app:cardCornerRadius="8dp">
 
                     <ImageView
@@ -105,28 +105,28 @@
 
                     </LinearLayout>
 
-                    <ImageButton
+                    <ImageView
                         android:layout_marginStart="8dp"
                         android:layout_centerVertical="true"
                         android:hapticFeedbackEnabled="true"
-                        android:layout_width="52dp"
+                        android:layout_width="32dp"
                         android:layout_toStartOf="@+id/fav"
-                        android:layout_height="52dp"
-                        android:src="@drawable/add_outline"
+                        android:layout_height="32dp"
+                        android:src="@drawable/add_playlist"
                         android:background="@null"
                         android:elevation="30dp"
                         android:clickable="true"
                         android:id="@+id/add"
                         style="?android:attr/borderlessButtonStyle" />
 
-                    <ImageButton
-                        android:layout_marginStart="2dp"
+                    <ImageView
+                        android:layout_marginStart="8dp"
                         android:layout_centerVertical="true"
                         android:hapticFeedbackEnabled="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
-                        android:src="@drawable/fav"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/heart_outline"
                         android:background="@null"
                         android:elevation="30dp"
                         android:clickable="true"
@@ -270,22 +270,34 @@
                     android:layout_marginTop="16dp"
                     android:background="@drawable/up_next_background"
                     android:id="@+id/upnext"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:layout_margin="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:orientation="vertical">
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Up Next:"
-                        android:layout_marginStart="16sp"
-
-                        android:textStyle="bold"
+                        android:orientation="horizontal"
+                        android:gravity="center"
                         android:layout_marginVertical="16dp"
-                        android:fontFamily="sans-serif-medium" />
+                        android:layout_marginStart="16sp">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/queue" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Up Next:"
+                            android:textStyle="bold"
+
+                            android:fontFamily="sans-serif-medium" />
+                    </LinearLayout>
 
                     <RelativeLayout
 
@@ -351,7 +363,6 @@
                     <ImageView
                         android:id="@+id/volume_icon"
                         android:layout_width="24dp"
-                        android:layout_centerVertical="true"
                         android:layout_height="24dp"
                         android:layout_marginEnd="2dp"
                         android:src="@drawable/volume" />
@@ -369,11 +380,10 @@
                         android:layout_height="wrap_content"
                         android:layout_toStartOf="@+id/queue" />
 
-                    <ImageButton
-                        android:background="@null"
+                    <ImageView
                         android:id="@+id/queue"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:src="@drawable/queue"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="2dp"

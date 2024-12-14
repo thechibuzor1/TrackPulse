@@ -85,7 +85,6 @@
 
                                 <com.google.android.material.card.MaterialCardView
                                     android:id="@+id/playlist_cover"
-                                    android:backgroundTint="?attr/colorPrimary"
                                     android:layout_width="40dp"
                                     android:layout_height="40dp"
                                     app:strokeColor="@android:color/transparent"
@@ -123,18 +122,17 @@
 
                                 <com.google.android.material.card.MaterialCardView
                                     android:id="@+id/add_playlist_cover"
-                                    android:backgroundTint="?attr/colorPrimary"
                                     android:layout_width="40dp"
                                     android:layout_height="40dp"
                                     app:strokeColor="@android:color/transparent"
                                     app:cardCornerRadius="8dp">
 
                                     <ImageView
-                                        android:layout_width="25dp"
-                                        android:layout_height="25dp"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
                                         android:layout_gravity="center"
                                         android:scaleType="centerCrop"
-                                        android:src="@drawable/add" />
+                                        android:src="@drawable/add_playlist" />
                                 </com.google.android.material.card.MaterialCardView>
 
                                 <TextView
@@ -170,7 +168,7 @@
                                     android:layout_height="50dp"
                                     android:layout_gravity="center"
                                     android:scaleType="centerCrop"
-                                    android:src="@drawable/fav_home" />
+                                    android:src="@drawable/heart" />
                             </com.google.android.material.card.MaterialCardView>
                         </LinearLayout>
 

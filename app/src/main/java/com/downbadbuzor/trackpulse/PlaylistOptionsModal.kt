@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.downbadbuzor.trackpulse.Utils.UiUtils
 import com.downbadbuzor.trackpulse.adapters.AddToPlaylist
+import com.downbadbuzor.trackpulse.adapters.ShowAllSongsAdapter
 import com.downbadbuzor.trackpulse.databinding.PlaylistOptionsModalBinding
 import com.downbadbuzor.trackpulse.db.Playlist
 import com.downbadbuzor.trackpulse.db.PlaylistViewModel
@@ -38,6 +39,8 @@ class PlaylistOptionsModal(
 
     private lateinit var playlistOptionsModal: PlaylistOptionsModal
 
+    private lateinit var showAllSongsAdapter: ShowAllSongsAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,6 +51,7 @@ class PlaylistOptionsModal(
 
         when (operation) {
             "CREATE" -> {
+                binding.showAllSongsLayout.visibility = View.GONE
                 binding.editPlaylistLayout.visibility = View.GONE
                 binding.createPlaylistLayout.visibility = View.VISIBLE
                 binding.addToPlaylistLayout.visibility = View.GONE
@@ -59,6 +63,7 @@ class PlaylistOptionsModal(
             }
 
             "OPTIONS" -> {
+                binding.showAllSongsLayout.visibility = View.GONE
                 binding.editPlaylistLayout.visibility = View.GONE
                 binding.createPlaylistLayout.visibility = View.GONE
                 binding.addToPlaylistLayout.visibility = View.GONE
@@ -75,6 +80,14 @@ class PlaylistOptionsModal(
                     )
                 }
 
+                binding.addSongsToPlaylistOption.setOnClickListener {
+                    playlistOptionsModal = PlaylistOptionsModal(playlist, "SHOW_ALL_SONGS")
+                    playlistOptionsModal.show(
+                        parentFragmentManager,
+                        playlistOptionsModal.tag
+                    )
+                }
+
 
                 binding.deletePlaylist.setOnClickListener {
                     showConfirmationDialog(playlist!!)
@@ -82,13 +95,14 @@ class PlaylistOptionsModal(
             }
 
             "ADD_TO_PLAYLIST" -> {
+                binding.showAllSongsLayout.visibility = View.GONE
                 binding.createPlaylistLayout.visibility = View.GONE
                 binding.editPlaylistLayout.visibility = View.GONE
                 binding.addToPlaylistLayout.visibility = View.VISIBLE
                 binding.optionsLayout.visibility = View.GONE
                 binding.changePlaylistNameLayout.visibility = View.GONE
 
-                playlistAdapter = AddToPlaylist(playlistViewModel, songId, requireContext())
+                playlistAdapter = AddToPlaylist(playlistViewModel, songId)
                 binding.playlistRecyclerView.layoutManager =
                     StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
                 binding.playlistRecyclerView.adapter = playlistAdapter
@@ -103,6 +117,7 @@ class PlaylistOptionsModal(
             }
 
             "EDIT_PLAYLIST" -> {
+                binding.showAllSongsLayout.visibility = View.GONE
                 binding.createPlaylistLayout.visibility = View.GONE
                 binding.addToPlaylistLayout.visibility = View.GONE
                 binding.optionsLayout.visibility = View.GONE
@@ -125,6 +140,7 @@ class PlaylistOptionsModal(
             }
 
             "EDIT_PLAYLIST_NAME" -> {
+                binding.showAllSongsLayout.visibility = View.GONE
                 binding.createPlaylistLayout.visibility = View.GONE
                 binding.addToPlaylistLayout.visibility = View.GONE
                 binding.optionsLayout.visibility = View.GONE
@@ -135,6 +151,31 @@ class PlaylistOptionsModal(
 
                 binding.changePlaylistNameBtn.setOnClickListener {
                     renamePlaylist(binding.changePlaylistName.text.toString())
+                }
+            }
+
+            "SHOW_ALL_SONGS" -> {
+                binding.createPlaylistLayout.visibility = View.GONE
+                binding.addToPlaylistLayout.visibility = View.GONE
+                binding.optionsLayout.visibility = View.GONE
+                binding.editPlaylistLayout.visibility = View.GONE
+                binding.changePlaylistNameLayout.visibility = View.GONE
+                binding.showAllSongsLayout.visibility = View.VISIBLE
+
+                val playlistId = playlist?.id
+                showAllSongsAdapter =
+                    ShowAllSongsAdapter(playlistViewModel, playlistId.toString())
+                binding.showAllSongsRecyclerView.layoutManager =
+                    StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+                binding.showAllSongsRecyclerView.adapter = showAllSongsAdapter
+                playlistViewModel.getPlaylistById(playlistId!!.toInt()).observe(this) { playlist ->
+                    showAllSongsAdapter.addSongs(playlist.songs)
+                }
+
+
+                binding.saveButtonShowAllSongs.setOnClickListener {
+                    UiUtils.showToast(requireContext(), "Songs Added to ${playlist?.name}")
+                    dismiss()
                 }
             }
 

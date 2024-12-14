@@ -172,14 +172,14 @@ class PlayingBottomSheetFragment(
                 override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
                     super.onShuffleModeEnabledChanged(shuffleModeEnabled)
 
+                    MyExoPlayer.getNextSong()?.apply {
+                        setUpNext(title, artist, albumArtUri!!)
+                    }
+
                     if (shuffleModeEnabled) {
-                        MyExoPlayer.getNextSong()?.apply {
-                            setUpNext(title, artist, albumArtUri!!)
-                        }
+                        binding.playingShuffle.setImageResource(R.drawable.playing_shuffle)
                     } else {
-                        MyExoPlayer.getNextSong()?.apply {
-                            setUpNext(title, artist, albumArtUri!!)
-                        }
+                        binding.playingShuffle.setImageResource(R.drawable.playing_shuffle_off)
                     }
 
                 }
@@ -279,10 +279,10 @@ class PlayingBottomSheetFragment(
         binding.playingShuffle.setOnClickListener {
             if (MyExoPlayer.getIsShuffled()) {
                 MyExoPlayer.shuffle(false)
-                binding.playingShuffle.setImageResource(R.drawable.playing_shuffle_off)
+                // binding.playingShuffle.setImageResource(R.drawable.playing_shuffle_off)
             } else {
+                // binding.playingShuffle.setImageResource(R.drawable.playing_shuffle)
                 MyExoPlayer.shuffle(true)
-                binding.playingShuffle.setImageResource(R.drawable.playing_shuffle)
             }
         }
 
@@ -310,7 +310,6 @@ class PlayingBottomSheetFragment(
             likeUnLike()
         }
 
-
         return binding.root
     }
 
@@ -323,9 +322,9 @@ class PlayingBottomSheetFragment(
                     likedSongs.addAll(playlist.songs)
 
                     if (likedSongs.contains(currentSongId)) {
-                        binding.fav.setImageResource(R.drawable.fav_filled)
+                        binding.fav.setImageResource(R.drawable.heart)
                     } else {
-                        binding.fav.setImageResource(R.drawable.fav)
+                        binding.fav.setImageResource(R.drawable.heart_outline)
                     }
                 }
             }

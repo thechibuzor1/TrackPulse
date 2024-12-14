@@ -10,10 +10,8 @@
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -35,8 +33,7 @@
             </androidx.appcompat.widget.Toolbar>
 
             <androidx.core.widget.NestedScrollView
-
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_below="@+id/my_toolbar"
                 android:id="@+id/scrollView"
                 android:fillViewport="true"
@@ -68,9 +65,8 @@
                             android:id="@+id/search"
                             android:layout_centerVertical="true"
                             android:iconifiedByDefault="false"
-                            android:layout_width="match_parent"
+                            android:layout_width="300dp"
                             android:layout_height="40dp"
-
                             android:layout_marginEnd="8dp" />
 
                         <Button
@@ -87,7 +83,6 @@
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/playlist_cover"
-                        android:backgroundTint="?attr/colorPrimaryContainer"
                         android:layout_width="150dp"
                         android:layout_gravity="center"
                         android:layout_height="150dp"
@@ -101,7 +96,7 @@
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:src="@drawable/note" />
+                            android:src="@drawable/playlist" />
                     </com.google.android.material.card.MaterialCardView>
 
                     <RelativeLayout
@@ -156,7 +151,6 @@
                                 android:layout_marginEnd="4dp" />
 
                             <ImageView
-
                                 android:id="@+id/giant_play"
                                 android:layout_width="52dp"
                                 android:layout_height="52dp"
@@ -167,11 +161,45 @@
 
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:visibility="visible"
                         android:id="@+id/recyclerView"
                         android:nestedScrollingEnabled="false"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginTop="8dp" />
+
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/empty_playlist"
+                        android:layout_width="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Playlist is empty"
+                            android:textStyle="bold"
+                            android:textSize="24sp"
+                            android:layout_marginBottom="8dp"
+                            android:fontFamily="sans-serif-medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tap to add songs"
+                            android:textSize="18sp"
+                            android:layout_marginBottom="8dp"
+                            android:fontFamily="sans-serif-medium" />
+
+                        <ImageView
+                            android:scaleType="centerCrop"
+                            android:layout_gravity="center"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/add" />
+                    </LinearLayout>
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
 

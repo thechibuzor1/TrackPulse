@@ -1,6 +1,5 @@
 package com.downbadbuzor.trackpulse.adapters
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
@@ -20,7 +19,6 @@ import com.downbadbuzor.trackpulse.db.PlaylistViewModel
 class AddToPlaylist(
     private val playlistViewModel: PlaylistViewModel,
     private val songId: String?,
-    private val context: Context
 ) :
     RecyclerView.Adapter<AddToPlaylist.AddToPlaylistViewHolder>() {
 
@@ -55,19 +53,32 @@ class AddToPlaylist(
         return differ.currentList.size
     }
 
+
     override fun onBindViewHolder(holder: AddToPlaylistViewHolder, position: Int) {
         val currentPlaylist = differ.currentList[position]
 
         holder.binding.playlistName.text = currentPlaylist.name
 
         if (currentPlaylist.songs.contains(songId)) {
-            holder.binding.playlistCheckbox.isChecked = true
+            holder.binding.playlistCheckbox.setImageResource(R.drawable.checked)
+        } else {
+            holder.binding.playlistCheckbox.setImageResource(R.drawable.unchecked)
         }
 
+        val placeholderResId =
+            when (currentPlaylist.id) {
+                0 -> {
+                    R.drawable.heart
+                }
+
+                else -> {
+                    R.drawable.playlist
+                }
+            }
         Glide.with(holder.binding.playlistImage.context)
             .load(currentPlaylist.coverImage)
-            .placeholder(R.drawable.note)
-            .error(R.drawable.note)
+            .placeholder(placeholderResId)
+            .error(placeholderResId)
             .into(holder.binding.playlistImage)
 
         //background color match cover image
