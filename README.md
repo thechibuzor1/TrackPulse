@@ -56,7 +56,7 @@
 
 ### Prerequisites
 - Android Studio Flamingo or later.
-- Minimum SDK: 21 (Android 5.0 Lollipop).
+- Minimum SDK: 33 (Android 13 Tiramisu).
 
 ### Installation
 1. Clone the repository:
