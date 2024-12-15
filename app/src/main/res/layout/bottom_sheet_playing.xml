@@ -181,12 +181,12 @@
                     android:orientation="horizontal"
                     android:gravity="center">
 
-                    <ImageButton
+                    <ImageView
                         android:id="@+id/playing_shuffle"
                         android:layout_gravity="center"
+                        android:layout_height="32dp"
                         android:hapticFeedbackEnabled="true"
-                        android:layout_width="54dp"
-                        android:layout_height="54dp"
+                        android:layout_width="32dp"
                         android:src="@drawable/playing_shuffle_off"
                         android:background="@null"
                         android:elevation="30dp"
@@ -234,12 +234,12 @@
                         android:clickable="true"
                         style="?android:attr/borderlessButtonStyle" />
 
-                    <ImageButton
+                    <ImageView
                         android:id="@+id/playing_repeat"
                         android:layout_gravity="center"
                         android:hapticFeedbackEnabled="true"
-                        android:layout_width="54dp"
-                        android:layout_height="54dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:src="@drawable/playing_repeat"
                         android:background="@null"
                         android:elevation="30dp"

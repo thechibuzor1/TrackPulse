@@ -68,7 +68,7 @@ class PlayingBottomSheetFragment(
         }
 
         if (MyExoPlayer.getIsShuffled()) {
-            binding.playingShuffle.setImageResource(R.drawable.playing_shuffle)
+            binding.playingShuffle.setImageResource(R.drawable.shuffle_on)
         }
 
         MyExoPlayer.getNextSong()?.apply {
@@ -177,7 +177,7 @@ class PlayingBottomSheetFragment(
                     }
 
                     if (shuffleModeEnabled) {
-                        binding.playingShuffle.setImageResource(R.drawable.playing_shuffle)
+                        binding.playingShuffle.setImageResource(R.drawable.shuffle_on)
                     } else {
                         binding.playingShuffle.setImageResource(R.drawable.playing_shuffle_off)
                     }

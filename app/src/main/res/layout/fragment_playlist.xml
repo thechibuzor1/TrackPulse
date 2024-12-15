@@ -33,7 +33,7 @@
             </androidx.appcompat.widget.Toolbar>
 
             <androidx.core.widget.NestedScrollView
-                android:visibility="visible"
+                android:visibility="gone"
                 android:layout_below="@+id/my_toolbar"
                 android:id="@+id/scrollView"
                 android:fillViewport="true"

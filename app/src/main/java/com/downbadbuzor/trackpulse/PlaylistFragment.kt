@@ -8,6 +8,9 @@ import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.downbadbuzor.trackpulse.adapters.AudioAdapter
@@ -32,7 +35,7 @@ class PlaylistFragment : Fragment() {
     private lateinit var binding: FragmentPlaylistBinding
     private lateinit var audioAdapter: AudioAdapter
     private lateinit var audioList: ArrayList<AudioModel>
-
+    private lateinit var exoPlayer: ExoPlayer
     private lateinit var playlistViewModel: PlaylistViewModel
 
     private lateinit var playlistOptionsModal: PlaylistOptionsModal
@@ -279,6 +282,30 @@ class PlaylistFragment : Fragment() {
                     }
             }
         }
+
+
+        exoPlayer = MyExoPlayer.getInstance()!!
+        exoPlayer?.addListener(
+            object : Player.Listener {
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    if (MyExoPlayer.getCurrentPlaylistPlaying() == id && isPlaying) {
+                        binding.giantPlay.setImageResource(R.drawable.giant_pause)
+                    } else {
+                        binding.giantPlay.setImageResource(R.drawable.giant_play)
+                    }
+                }
+
+                override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+                    super.onMediaMetadataChanged(mediaMetadata)
+                    if (MyExoPlayer.getCurrentPlaylistPlaying() == id && MyExoPlayer.getIsPlaying()) {
+                        binding.giantPlay.setImageResource(R.drawable.giant_pause)
+                    } else {
+                        binding.giantPlay.setImageResource(R.drawable.giant_play)
+                    }
+                }
+
+            }
+        )
     }
 
     private fun getSongsByIds(

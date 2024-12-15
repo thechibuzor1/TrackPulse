@@ -379,13 +379,10 @@ object MyExoPlayer {
 
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     super.onIsPlayingChanged(isPlaying)
-                    //giant pause play
-                    //val giantplay = activity.findViewById<ImageView>(R.id.giant_play)
                     val play_pause_home = activity.findViewById<ImageView>(R.id.play_pause_home)
 
                     if (isPlaying) {
                         this@MyExoPlayer.isPlaying = true
-                        // giantplay.setImageResource(R.drawable.giant_pause)
                         play_pause_home.setImageResource(R.drawable.round_pause_24)
                         this@MyExoPlayer.startService(activity)
 
